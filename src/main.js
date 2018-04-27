@@ -31,9 +31,10 @@ import faDotCircle from '@fortawesome/fontawesome-free-solid/faDotCircle';
 import faServer from '@fortawesome/fontawesome-free-solid/faServer';
 import faSyncAlt from '@fortawesome/fontawesome-free-solid/faSyncAlt';
 import faSpaceShuttle from '@fortawesome/fontawesome-free-solid/faSpaceShuttle';
+import faChartPie from '@fortawesome/fontawesome-free-solid/faChartPie';
 // import faPhoenixFramework from '@fortawesome/fontawesome-free-solid/faPhoenixFramework';
 
-fontawesome.library.add(brands, faSpinner, faSignOutAlt, faHome, faUser, faChessKing, faDove, faCubes, faDotCircle, faServer, faSyncAlt, faSpaceShuttle)
+fontawesome.library.add(brands, faSpinner, faSignOutAlt, faHome, faUser, faChessKing, faDove, faCubes, faDotCircle, faServer, faSyncAlt, faSpaceShuttle, faChartPie)
 
 Vue.use(BootstrapVue)
 // Vue.component('b-modal', bModal)

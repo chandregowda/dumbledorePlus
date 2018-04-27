@@ -5,6 +5,7 @@ import Router from 'vue-router'
 import Login from '@/components/Auth/Login'
 // import Dashboard from '@/components/Dashboard/Dashboard'
 import Process from '@/components/Process'
+import ProcessSummary from '@/components/ProcessSummary'
 import Disk from '@/components/Disk'
 import Datacenter from '@/components/Datacenter'
 import Home from '@/components/Home'
@@ -40,6 +41,18 @@ const routes = [{
     path: '/process',
     name: 'Process',
     component: Process,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.AUTH_TOKEN_GETTER) {
+        next()
+      } else {
+        next('/')
+      }
+    }
+  },
+  {
+    path: '/process-summary',
+    name: 'ProcessSummary',
+    component: ProcessSummary,
     beforeEnter: (to, from, next) => {
       if (store.getters.AUTH_TOKEN_GETTER) {
         next()

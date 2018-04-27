@@ -1,6 +1,6 @@
 <template>
   <b-navbar toggleable="md" type="dark" variant="primary" fixed :sticky="stickyValue">
-    <b-navbar-brand href="#"><font-awesome-icon icon="space-shuttle" rotation="270"/> {{title}}</b-navbar-brand>
+    <b-navbar-brand href="#"><font-awesome-icon icon="space-shuttle" :rotation="270" /> {{title}}</b-navbar-brand>
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav class="ml-auto">
       <template v-if="isAuthenticated">
@@ -9,6 +9,7 @@
             <font-awesome-icon  size="lg" icon="home" />
         </b-nav-item>
         <b-nav-item to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
+        <b-nav-item to="/process-summary" active-class="active" ><font-awesome-icon size="lg" icon="chart-pie" title="Process Summary"/></b-nav-item>
         <b-nav-item to="/disk" active-class="active" ><font-awesome-icon size="lg" icon="dot-circle" /></b-nav-item>
         <b-nav-item to="/datacenter" active-class="active" ><font-awesome-icon size="lg" icon="server" /></b-nav-item>
         <button class='logout' @click='logout' >

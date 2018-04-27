@@ -156,7 +156,7 @@ export default {
                 {
                     key: 'generatedOn',
                     sortable: true,
-                    label: 'Data Retreived As On',
+                    label: 'Data Valid As On',
                     variant: 'info',
                     formatter: value => {
                         return new Date(value)
@@ -265,7 +265,7 @@ table.b-table > tfoot > tr > th.sorting,
 .form-inline .form-control,
 select.form-control {
     font-size: 12px;
-    /* padding: 5px; */
+    margin: 0 2px;
 }
 .loading {
     font-size: 12px;
