@@ -8,8 +8,8 @@
   </div>
 </template>
 <script>
-import Counter from './Counter'
-import Result from './Result'
+import Counter from './Counter';
+import Result from './Result';
 export default {
     components: {
         appResult: Result,
@@ -20,5 +20,5 @@ export default {
             return this.$store.state.counterStore.counter;
         }
     }
-}
+};
 </script>

@@ -12,29 +12,105 @@ const AUTH_SET_LOGOUT_TIMER = 'AUTH_SET_LOGOUT_TIMER'
 const AUTH_LOGIN_ACTION = 'AUTH_LOGIN_ACTION'
 const AUTH_AUTO_LOGIN_ACTION = 'AUTH_AUTO_LOGIN_ACTION'
 
-/* const counterModule = {
+const DATACENTERS_GETTER = 'DATACENTERS_GETTER'
+const DATACENTERS_FETCH_ACTION = 'DATACENTERS_FETCH_ACTION'
+
+const PROCESS_GETTER = 'PROCESS_GETTER'
+const PROCESS_FETCHING_GETTER = 'PROCESS_FETCHING_GETTER'
+const PROCESS_GET_ALL_ACTION = 'PROCESS_GET_ALL_ACTION'
+const PROCESS_FETCH_START_ACTION = 'PROCESS_FETCH_START_ACTION'
+
+const DISK_GETTER = 'DISK_GETTER'
+const DISK_GET_ALL_ACTION = 'DISK_GET_ALL_ACTION'
+
+const datacenterModule = {
   state: {
-    counter: 5
+    datacenters: null
   },
   mutations: {
-    increment: state => state.counter++,
-    decrement: state => state.counter--
+    updateDatacenters: (state, datacenters) => {
+      state.datacenters = datacenters
+    }
   },
   getters: {
-    getIncrement: state => state.counter * 2
+    [DATACENTERS_GETTER]: state => state.datacenters
   },
   actions: {
-    incrementAfterSometime: ({
+    [DATACENTERS_FETCH_ACTION]: ({
       commit
     }) => {
-      setInterval(() => {
-        commit('increment')
-      }, 1000)
+      console.log('Getting Datacenter details')
+      axios.post('/datacenter/get').then(res => {
+        console.log('Got datacenter details')
+        commit('updateDatacenters', res.data)
+      }).catch(e => console.log(e));
     }
   }
 }
- */
-const newCounterModule = {
+
+const diskModule = {
+  state: {
+    diskDetails: []
+  },
+  mutations: {
+    updateDiskDetails: (state, diskDetails) => {
+      state.diskDetails = diskDetails
+    }
+  },
+  getters: {
+    [DISK_GETTER]: state => state.diskDetails
+  },
+  actions: {
+    [DISK_GET_ALL_ACTION]: ({
+      commit
+    }) => {
+      console.log('Getting Disk details')
+      axios.post('/disk/get').then(res => {
+        console.log('Got disk details', res)
+        commit('updateDiskDetails', res.data)
+      }).catch(e => console.log(e));
+    }
+  }
+}
+
+const processModule = {
+  state: {
+    processDetails: [],
+    fetching: false
+  },
+  mutations: {
+    updateProcessDetails: (state, processDetails) => {
+      state.processDetails = processDetails;
+    },
+    updateFetching: (state, isFetchingCompleted) => {
+      state.fetching = isFetchingCompleted;
+    }
+  },
+  getters: {
+    [PROCESS_GETTER]: state => state.processDetails,
+    [PROCESS_FETCHING_GETTER]: state => state.fetching
+  },
+  actions: {
+    [PROCESS_FETCH_START_ACTION]: ({
+      commit
+    }) => {
+      commit('updateFetching', true);
+    },
+    [PROCESS_GET_ALL_ACTION]: ({
+      commit
+    }) => {
+      console.log('Getting Process details');
+      commit('updateFetching', true);
+      axios.post('/process/get').then(res => {
+        // axiosDumbledore.post('capi/getProcessDetails').then(res => {
+        console.log('Got process details from Dumbledore')
+        commit('updateFetching', false);
+        commit('updateProcessDetails', res.data);
+      }).catch(e => console.log(e));
+    }
+  }
+}
+const authModule = {
   state: {
     userDetails: null,
     token: null
@@ -60,7 +136,9 @@ const newCounterModule = {
       commit,
       dispatch
     }, timeOutHours) => {
-      let totalSeconds = (timeOutHours || 24) * 60 * 60 // in Seconds
+      // let totalSeconds = (timeOutHours || 24) * 60 * 60 // in Seconds
+      let totalSeconds = 24 * 60 * 60 // in Seconds
+      console.log('Logouts in ', totalSeconds);
       setTimeout(() => {
         dispatch(AUTH_LOGOUT_ACTION)
       }, totalSeconds)
@@ -68,6 +146,7 @@ const newCounterModule = {
     [AUTH_LOGOUT_ACTION]: ({
       commit
     }, payload) => {
+      console.log('Logging out')
       commit('updateAuthDetails', {
         token: null,
         userDetails: null
@@ -97,7 +176,7 @@ const newCounterModule = {
                 displayName
               }
             })
-            router.replace('/home') // Now navigate to default login page
+            router.replace('/process') // Now navigate to default login page
           }
         }
       }
@@ -114,12 +193,14 @@ const newCounterModule = {
           })
 
           dispatch(AUTH_CREATE_USER_ACTION, res.data.details) // Store/update user details
-          dispatch(AUTH_SET_LOGOUT_TIMER, res.data.expiryTime) // Store/update user details
+          // dispatch(AUTH_SET_LOGOUT_TIMER, res.data.expiryTime) // Store/update user details
 
           // Store user details in localstorage
           localStorage.setItem('token', res.data.token)
           let expiresIn = new Date((new Date()).getTime() + (res.data.expiryTime || 24) * 60 * 60 * 1000)
           localStorage.setItem('expirationDate', expiresIn)
+
+          // set 'x-access-token' for further API calls
           axios.defaults.headers.common['x-access-token'] = res.data.token
 
           router.replace('/home') // Navigate to home page on successful login
@@ -148,6 +229,9 @@ const newCounterModule = {
 export const store = new Vuex.Store({
   modules: {
     // counterStore: counterModule,
-    authStore: newCounterModule
+    authStore: authModule,
+    datacenterStore: datacenterModule,
+    diskStore: diskModule,
+    processStore: processModule
   }
 })

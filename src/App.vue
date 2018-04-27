@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="container-fluid full-width">
     <!-- <img src="./assets/logo.png"> -->
     <!-- <app-store-demo /> -->
     <app-header />
@@ -29,5 +29,32 @@ export default {
     color: #2c3e50;
     /* text-align: center; */
     /* margin-top: 60px; */
+    padding: 0;
 }
+/* SCROLL BAR CHANGE */
+/* width */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px transparent;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    /* background: #e4e4e4; */
+    background: #b5d8f5;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    /* background: #cdcdcd; */
+    background: #f5c27f;
+}
+
+/* END of scroll */
 </style>

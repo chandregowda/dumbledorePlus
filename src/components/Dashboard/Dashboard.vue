@@ -12,6 +12,9 @@ export default {
             let details = this.$store.getters.AUTH_USER_DETAILS_GETTER;
             return { displayName: '', ...details };
         }
+    },
+    created() {
+        this.$store.dispatch('PROCESS_GET_BUILD_DETAILS');
     }
 };
 </script>

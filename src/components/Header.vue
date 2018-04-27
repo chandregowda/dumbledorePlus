@@ -1,23 +1,35 @@
 <template>
-  <div>
-  <b-navbar toggleable="md" type="dark" variant="info">
-    <b-navbar-brand href="#">Dumbledore + </b-navbar-brand>
+  <b-navbar toggleable="md" type="dark" variant="primary" fixed :sticky="stickyValue">
+    <b-navbar-brand href="#"><font-awesome-icon icon="space-shuttle" rotation="270"/> {{title}}</b-navbar-brand>
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav class="ml-auto">
       <template v-if="isAuthenticated">
-        <b-navbar-brand to="#" active-class="active" exact >Welcome, {{user.displayName}}</b-navbar-brand>
-        <b-nav-item to="/home" active-class="active" exact >Home</b-nav-item>
-        <b-nav-item to="/dashboard" active-class="active" >Dashboard</b-nav-item>
-        <button class='logout' @click='logout' >Logout</button>
+        <b-navbar-brand to="#" active-class="active" exact ><font-awesome-icon  size="sm" icon="user" /> {{user.displayName}}</b-navbar-brand>
+        <b-nav-item to="/home" active-class="active" exact >
+            <font-awesome-icon  size="lg" icon="home" />
+        </b-nav-item>
+        <b-nav-item to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
+        <b-nav-item to="/disk" active-class="active" ><font-awesome-icon size="lg" icon="dot-circle" /></b-nav-item>
+        <b-nav-item to="/datacenter" active-class="active" ><font-awesome-icon size="lg" icon="server" /></b-nav-item>
+        <button class='logout' @click='logout' >
+            <font-awesome-icon  size="lg" icon="sign-out-alt" />
+        </button>
       </template>
     </b-navbar-nav>
     </b-collapse>
   </b-navbar>
-  </div>
 </template>
 
 <script>
+import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
+
 export default {
+    data() {
+        return {
+            stickyValue: true,
+            title: 'Dumbledore +'
+        };
+    },
     computed: {
         isAuthenticated() {
             return this.$store.getters.AUTH_TOKEN_GETTER !== null;
@@ -32,6 +44,9 @@ export default {
         logout() {
             return this.$store.dispatch('AUTH_LOGOUT_ACTION');
         }
+    },
+    components: {
+        FontAwesomeIcon
     }
 };
 </script>

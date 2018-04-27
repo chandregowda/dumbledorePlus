@@ -2,24 +2,24 @@
   <div class="loginForm">
     <b-form @submit="onSubmit" @reset="onReset" v-if="show">
       <b-form-group id="emailGroup"
-                    label="Email address:"
+                    label="Login"
                     label-for="email"
-                    description="We'll never share your email with anyone else.">
+                    description="You can skip @yodlee.com">
         <b-form-input id="email"
                       type="text"
                       v-model="form.email"
                       required
-                      placeholder="Enter email">
+                      placeholder="you@yodlee.com">
         </b-form-input>
       </b-form-group>
       <b-form-group id="passwordGroup"
-                    label="Password:"
+                    label="Password"
                     label-for="password">
         <b-form-input id="password"
                       type="password"
                       v-model="form.password"
                       required
-                      placeholder="Enter password">
+                      placeholder="Password">
         </b-form-input>
       </b-form-group>
       <b-button type="submit" variant="primary">Submit</b-button>
