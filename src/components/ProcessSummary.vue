@@ -1,26 +1,20 @@
 <template>
-  <div class="container-fluid">
-    <h3>Process Summary</h3>
+  <div class="container-fluid ">
+    <h3 class="mt-3"><font-awesome-icon class="mr-3" size="lg" icon="chart-pie" title="Process Summary"/>Process Summary</h3>
     <hr>
-      <b-card no-body>
+    <b-card no-body>
       <b-tabs small card v-model="tabIndex">
-        <b-tab :title="key.toUpperCase()" v-for="(value, key) of getProcessSummary" :key="key">
-          <p class="h5"><span class="brown">{{value.totalIp}}</span> IP's running <span class="brown">{{value.totalProcess}}</span> process</p>
+        <b-tab :title="environment.toUpperCase()" v-for="(details, environment) of getProcessSummary" :key="environment">
+          <p class="h5"><span class="brown">{{details.totalIp}}</span> IP's running <span class="brown">{{details.totalProcess}}</span> process</p>
             <div class="card-deck">
-              <div class="card" v-for="(dcDetails, dcName) of value.datacenters" :key="dcName">
+              <div class="card" v-for="(dcDetails, dc) of details.datacenters" :key="dc">
                 <div class="card-body">
-                  <h6 class="card-title">{{dcName.toUpperCase()}}</h6>
+                  <b-button size="md" variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
+                    {{dc.toUpperCase()}}
+                  </b-button>
+                  <!-- <p class="h3 card-title">{{dc.toUpperCase()}}</p> -->
                   <h6 class="card-subtitle mb-2 text-muted">IP:{{dcDetails.totalIp}}, Process:{{dcDetails.totalComponent}}</h6>
-                  <section class="card-text">
-                    <b-table :items="formatedComponents(dcDetails.components)" :fields="fields"
-                    show-empty
-                    striped
-                    bordered
-                    small
-                    hover
-                    responsive="true"
-                    head-variant="light" />
-                  </section>
+                  <app-component-summary :componentDetails="dcDetails.components" />
                 </div>
               </div>
             </div>
@@ -32,35 +26,28 @@
 </template>
 
 <script>
+import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
+import ComponentSummary from './ComponentSummary';
+
 export default {
     data() {
         return {
-            tabIndex: 0,
-            fields: [
-                {
-                    key: 'component',
-                    sortable: true
-                },
-                {
-                    key: 'count',
-                    label: 'Nos'
-                }
-            ]
+            tabIndex: 0
         };
     },
     methods: {
-        formatedComponents(obj) {
-            return Object.keys(obj)
-                .sort(function(a, b) {
-                    return a.toLowerCase().localeCompare(b, 'en', { sensitivity: 'base' });
-                })
-                .map(k => ({ component: k, count: obj[k] }));
+        moreActions(dcInfo) {
+            this.$router.push({ name: 'DatacenterProcessDetails', params: { dcInfo } });
         }
     },
     computed: {
         getProcessSummary() {
             return this.$store.getters.PROCESS_SUMMARY_GETTER;
         }
+    },
+    components: {
+        FontAwesomeIcon,
+        appComponentSummary: ComponentSummary
     }
 };
 </script>

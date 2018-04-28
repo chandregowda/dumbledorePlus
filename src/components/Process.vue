@@ -1,12 +1,12 @@
 <template>
   <div class="container-fluid">
     <!-- <app-process-filters></app-process-filters> -->
-    <h3 class="header">Process Details</h3>
-    <b-form inline class="my-form-class">
-        <!-- <b-form-input v-model="filters.environment" type="text" size="sm" placeholder="Filter Environment" /> -->
+    <h3 class="mt-3"><font-awesome-icon class="mr-3" size="lg" icon="cubes" title="Process Details"/>Process Details</h3>
+    <hr>
+    <b-form inline>
+        <font-awesome-icon icon="filter" class="success"/>
         <b-form-select v-model="filters.environment" :options="envOptions" size="sm" />
         <b-form-select v-model="filters.datacenter" :options="filteredDataCenters" size="sm" />
-        <!-- <b-form-input v-model="filters.datacenter" type="text" size="sm" placeholder="Filter Datacenter" /> -->
         <b-form-input v-model="filters.ip" type="text" size="sm" placeholder="By SERVER" />
         <b-form-input v-model="filters.component" type="text" size="sm" placeholder="By COMPONENT" />
         <b-form-input v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
@@ -75,14 +75,7 @@
 <script>
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import axios from '../axios-auth';
-
-/* UITLITY FUNCTION */
-function thousandSeparator(x, separator = '.') {
-    return x
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, separator)
-        .replace(/\.0*/g, '.');
-}
+import * as utils from '../assets/appUtils';
 
 export default {
     data() {
@@ -123,7 +116,7 @@ export default {
                     sortable: true,
                     label: 'Server',
                     formatter: value => {
-                        return thousandSeparator(value);
+                        return utils.thousandSeparator(value);
                     }
                 },
                 {
@@ -209,8 +202,15 @@ export default {
     },
     created() {
         axios.defaults.headers.common['x-access-token'] = localStorage.getItem('token');
-        this.$store.dispatch('DATACENTERS_FETCH_ACTION'); // get the datacenters, make sure 'x-access-token' is set
-        this.$store.dispatch('PROCESS_GET_ALL_ACTION');
+
+        let datacenters = this.$store.getters.DATACENTERS_GETTER;
+        let oldProcessDetails = this.$store.getters.PROCESS_GETTER;
+        if (!datacenters || !datacenters.length) {
+            this.$store.dispatch('DATACENTERS_FETCH_ACTION'); // get the datacenters, make sure 'x-access-token' is set
+        }
+        if (!oldProcessDetails || !oldProcessDetails.length) {
+            this.$store.dispatch('PROCESS_GET_ALL_ACTION');
+        }
     },
     methods: {
         reload() {
@@ -226,11 +226,6 @@ export default {
 </script>
 
 <style>
-.process-details-header {
-    display: flex;
-    justify-content: space-between;
-}
-
 table.b-table > thead > tr > th,
 table.b-table > tfoot > tr > th,
 table.b-table > thead > tr > th.sorting,
@@ -240,27 +235,10 @@ table.b-table > tfoot > tr > th.sorting,
     font-size: 12px !important;
     white-space: nowrap;
 }
-.title {
-    flex: 1;
-    white-space: nowrap;
-    font-size: 12px;
-    text-align: center;
-}
-.filters {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px auto;
-}
-.filter-fields {
-    flex: 1;
-}
 .link-btn {
     font-size: 12px;
     color: darkblue;
     padding: 0;
-}
-.header {
-    margin-top: 10px;
 }
 .form-inline .form-control,
 select.form-control {

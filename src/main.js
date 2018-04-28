@@ -6,6 +6,7 @@ import Vuex from 'vuex'
 import App from './App'
 import router from './router'
 // import store from './store/store'
+
 import {
   store
 } from './store/storeContainer'
@@ -32,9 +33,11 @@ import faServer from '@fortawesome/fontawesome-free-solid/faServer';
 import faSyncAlt from '@fortawesome/fontawesome-free-solid/faSyncAlt';
 import faSpaceShuttle from '@fortawesome/fontawesome-free-solid/faSpaceShuttle';
 import faChartPie from '@fortawesome/fontawesome-free-solid/faChartPie';
+import faFilter from '@fortawesome/fontawesome-free-solid/faFilter';
+import faSitemap from '@fortawesome/fontawesome-free-solid/faSitemap';
 // import faPhoenixFramework from '@fortawesome/fontawesome-free-solid/faPhoenixFramework';
 
-fontawesome.library.add(brands, faSpinner, faSignOutAlt, faHome, faUser, faChessKing, faDove, faCubes, faDotCircle, faServer, faSyncAlt, faSpaceShuttle, faChartPie)
+fontawesome.library.add(brands, faSpinner, faSignOutAlt, faHome, faUser, faChessKing, faDove, faCubes, faDotCircle, faServer, faSyncAlt, faSpaceShuttle, faChartPie, faFilter, faSitemap)
 
 Vue.use(BootstrapVue)
 // Vue.component('b-modal', bModal)
