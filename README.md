@@ -1,6 +1,5 @@
-# play
-
-> Playground project
+# dumbledorePlus
+Dumbledore in Vue JS
 
 ## Build Setup
 
