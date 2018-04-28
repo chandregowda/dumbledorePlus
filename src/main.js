@@ -21,23 +21,26 @@ import BootstrapVue from 'bootstrap-vue'
 
 import fontawesome from '@fortawesome/fontawesome'
 import brands from '@fortawesome/fontawesome-free-brands'
-import faSpinner from '@fortawesome/fontawesome-free-solid/faSpinner'
-import faSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
-import faHome from '@fortawesome/fontawesome-free-solid/faHome';
-import faUser from '@fortawesome/fontawesome-free-solid/faUser';
-import faChessKing from '@fortawesome/fontawesome-free-solid/faChessKing';
-import faDove from '@fortawesome/fontawesome-free-solid/faDove';
-import faCubes from '@fortawesome/fontawesome-free-solid/faCubes';
-import faDotCircle from '@fortawesome/fontawesome-free-solid/faDotCircle';
-import faServer from '@fortawesome/fontawesome-free-solid/faServer';
-import faSyncAlt from '@fortawesome/fontawesome-free-solid/faSyncAlt';
-import faSpaceShuttle from '@fortawesome/fontawesome-free-solid/faSpaceShuttle';
-import faChartPie from '@fortawesome/fontawesome-free-solid/faChartPie';
-import faFilter from '@fortawesome/fontawesome-free-solid/faFilter';
-import faSitemap from '@fortawesome/fontawesome-free-solid/faSitemap';
+import solid from '@fortawesome/fontawesome-free-solid';
+
+// import faSpinner from '@fortawesome/fontawesome-free-solid/faSpinner'
+// import faSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
+// import faHome from '@fortawesome/fontawesome-free-solid/faHome';
+// import faUser from '@fortawesome/fontawesome-free-solid/faUser';
+// import faChessKing from '@fortawesome/fontawesome-free-solid/faChessKing';
+// import faDove from '@fortawesome/fontawesome-free-solid/faDove';
+// import faCubes from '@fortawesome/fontawesome-free-solid/faCubes';
+// import faDotCircle from '@fortawesome/fontawesome-free-solid/faDotCircle';
+// import faServer from '@fortawesome/fontawesome-free-solid/faServer';
+// import faSyncAlt from '@fortawesome/fontawesome-free-solid/faSyncAlt';
+// import faSpaceShuttle from '@fortawesome/fontawesome-free-solid/faSpaceShuttle';
+// import faChartPie from '@fortawesome/fontawesome-free-solid/faChartPie';
+// import faFilter from '@fortawesome/fontawesome-free-solid/faFilter';
+// import faSitemap from '@fortawesome/fontawesome-free-solid/faSitemap';
 // import faPhoenixFramework from '@fortawesome/fontawesome-free-solid/faPhoenixFramework';
 
-fontawesome.library.add(brands, faSpinner, faSignOutAlt, faHome, faUser, faChessKing, faDove, faCubes, faDotCircle, faServer, faSyncAlt, faSpaceShuttle, faChartPie, faFilter, faSitemap)
+// fontawesome.library.add(brands, solid, faSpinner, faSignOutAlt, faHome, faUser, faChessKing, faDove, faCubes, faDotCircle, faServer, faSyncAlt, faSpaceShuttle, faChartPie, faFilter, faSitemap)
+fontawesome.library.add(brands, solid);
 
 Vue.use(BootstrapVue)
 // Vue.component('b-modal', bModal)

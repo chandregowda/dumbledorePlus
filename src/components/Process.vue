@@ -173,14 +173,15 @@ export default {
         },
         filteredDetails() {
             let filters = this.filters;
-
             let data = this.$store.getters.PROCESS_GETTER;
             for (const key in filters) {
                 if (filters.hasOwnProperty(key) && filters[key]) {
-                    const element = filters[key].trim().toLowerCase();
+                    const element = filters[key].trim();
                     if (element) {
                         let newData = data.filter(item => {
-                            return item[key].toLowerCase().includes(element);
+                            let reg = new RegExp(element.toLowerCase(), 'gi');
+                            return reg.test(item[key].toString().toLowerCase());
+                            // return item[key].toLowerCase().includes(element);
                         });
                         data = newData; // reassign filtered list
                     }

@@ -13,15 +13,62 @@
       <div class="col">
         <b-form inline>
           <font-awesome-icon icon="filter" class="success"/>
-          <b-form-input class="small" v-model="filters.ip" type="text" size="sm" placeholder="By SERVER" />
+          <b-form-input v-model="filters.ip" type="text" size="sm" placeholder="By SERVER" />
           <b-form-select v-model="filters.component" :options="componentOptions" size="sm" />
           <!-- <b-form-input class="small" v-model="filters.component" type="text" size="sm" placeholder="By COMPONENT" /> -->
-          <b-form-input class="medium" v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
-          <b-form-input class="small" v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
-          <b-form-input class="medium" v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
+          <b-form-input v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
+          <b-form-input v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
+          <b-form-input v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
+          <b-form-input v-model="filters.pid" type="text" size="sm" placeholder="By PROCESS ID" />
+          <!-- <b-button size="sm" class="ml-1" variant="outline-warning" @click="scanLogs" :disabled="isLoading">
+            <font-awesome-icon icon="spinner" spin v-if="isLoading" /> <span v-if="isLoading" class="loading"> please wait...</span>
+            <font-awesome-icon icon="binoculars" v-if="!isLoading" /> <span v-if="!isLoading" class="log-summary">Scan Logs</span>
+          </b-button> -->
+          <div class="ml-3">
+            <b-btn size="sm" variant="outline-info" v-b-modal.modal1  :disabled="isLoading"> <font-awesome-icon icon="binoculars" />{{scanActionText}}</b-btn>
+            <!-- Modal Component -->
+            <b-modal ref="myModalRef" hide-footer id="modal1" title="Scan Options" v-model="modalShow">
+              <div class="my-1">
+                <div class="row">
+                  <div class="col-3">
+                    <b-form-group label="Log Type">
+                      <b-form-radio-group id="logTypes" v-model="scanOptions.logType" name="radioSubComponent">
+                        <b-form-radio value="server">Server</b-form-radio>
+                        <b-form-radio value="core">Core</b-form-radio>
+                      </b-form-radio-group>
+                    </b-form-group>
+                  </div>
+                  <div class="col-3">
+                    <b-form-group label="Search Date">
+                      <b-form-input class="small" v-model.trim="scanOptions.searchDate" type="text" size="sm" placeholder="Search Date" />
+                    </b-form-group>
+                  </div>
+                  <div class="col">
+                    <b-form-group label="Search String (optional)">
+                      <b-form-input v-model.trim="scanOptions.searchString" type="text" size="sm" placeholder="Search String" />
+                    </b-form-group>
+                  </div>
+                </div>
+
+              </div>
+              <b-btn class="mt-3" variant="outline-info" block @click="scanLogs" :disabled="isLoading">
+                <font-awesome-icon icon="spinner" spin v-if="isLoading" /> <span v-if="isLoading" class="loading"> Scanning is in progress, please wait...</span>
+                <font-awesome-icon icon="binoculars" v-if="!isLoading" /> <span v-if="!isLoading" class="log-summary">{{scanText}}</span>
+              </b-btn>
+              <!-- <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Scan Now</b-btn> -->
+            </b-modal>
+          </div>
+
+          <div class="ml-3">
+            <!-- Modal Component -->
+            <b-modal ref="myModalRef" size="lg" hide-footer id="modal2" title="Scan Result" v-model="resultmodalShow">
+              <app-exception-summary :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions"/>
+              <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Analysis Completed</b-btn>
+            </b-modal>
+          </div>
+
         </b-form>
         <br/>
-
         <div>
           <b-table
             show-empty
@@ -46,16 +93,21 @@
 
 <script>
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
-import ComponentSummary from './ComponentSummary';
+import ExceptionSummary from './ExceptionSummary';
 import axios from '../axios-auth';
 import * as utils from '../assets/appUtils';
+import moment from 'moment';
 
 export default {
     props: ['dcInfo'],
     data() {
         return {
-            // fields: ['first_name', 'last_name', 'age'],
-            allSelected: '',
+            isLoading: false,
+            modalShow: false,
+            resultmodalShow: false,
+            scanText: 'Scan Now',
+            scanActionText: 'Scan Options',
+            exceptionDetails: null,
             envOptions: [
                 { value: null, text: 'By ENVIRONMENT' },
                 { value: 'production', text: 'Production' },
@@ -68,7 +120,8 @@ export default {
                 component: '',
                 cobrandGroup: '',
                 build: '',
-                processStartDate: ''
+                processStartDate: '',
+                pid: ''
             },
             fields: [
                 {
@@ -108,11 +161,69 @@ export default {
                             .splice(0, 5)
                             .join(' ');
                     }
-                }
-            ]
+                },
+                { key: 'pid', label: 'Process ID' }
+            ],
+            scanOptions: {
+                logType: 'server',
+                searchDate: moment().format('YYYY-MM-DD'),
+                searchString: ''
+            }
         };
     },
+    methods: {
+        scanLogs() {
+            this.isLoading = true;
+            this.scanActionText = 'Scanning in progress';
+            let processInfo = this.filteredDetails.map(processDetails => {
+                let { ip, instance, component, deploymentMethod } = processDetails;
+                return { ip, instance, component, deploymentMethod };
+            });
+            let from =
+                localStorage.getItem('accountName') ||
+                this.$store.getters.AUTH_USER_DETAILS_GETTER.accountName ||
+                'Unknown';
+
+            axios
+                .post('/scanner/getComponentExceptionSummary', {
+                    mailTo: from + '@yodlee.com',
+                    environments: [this.dcInfo.environment],
+                    datacenters: [this.dcInfo.dc],
+                    logType: this.scanOptions.logType,
+                    searchString: this.scanOptions.searchString,
+                    searchDate: this.scanOptions.searchDate || moment().format('YYYY-MM-DD'),
+                    processInfo,
+                    logPath: '/var/log'
+                })
+                .then(result => {
+                    console.log('Got result', result);
+                    this.exceptionDetails = result.data;
+                    this.isLoading = false;
+                    this.scanActionText = 'Scan Options';
+                    if (result.data.length) {
+                        this.modalShow = false;
+                        setTimeout(() => {
+                            this.resultmodalShow = true;
+                        }, 1000);
+                    } else {
+                        this.scanText = `Scan Completed with ZERO search results`;
+                    }
+                })
+                .catch(e => {
+                    console.log(e);
+                    this.isLoading = false;
+                    this.scanText = `Scan Completed, with some Error, ${e}`;
+                });
+        },
+        hideModal() {
+            this.$refs.myModalRef.hide();
+        }
+    },
     computed: {
+        // isLoading() {
+        //     let isLoadingCompleted = this.$store.getters.PROCESS_FETCHING_GETTER;
+        //     return isLoadingCompleted;
+        // },
         filteredDetails() {
             let filters = this.filters;
             let data = this.$store.getters.PROCESS_GETTER;
@@ -124,7 +235,9 @@ export default {
                             if (key === 'component') {
                                 return item[key] === element;
                             }
-                            return item[key].toLowerCase().includes(element.toLowerCase());
+                            let reg = new RegExp(element.toLowerCase(), 'gi');
+                            return reg.test(item[key].toString().toLowerCase());
+                            // return item[key].toLowerCase().includes(element.toLowerCase());
                         });
                         data = newData; // reassign filtered list
                     }
@@ -133,8 +246,8 @@ export default {
             return data;
         },
         componentOptions() {
-          let obj = this.dcInfo.dcDetails.components;
-            return Object.keys( obj || {})
+            let obj = this.dcInfo.dcDetails.components;
+            return Object.keys(obj || {})
                 .sort(function(a, b) {
                     return a.toLowerCase().localeCompare(b, 'en', { sensitivity: 'base' });
                 })
@@ -160,7 +273,7 @@ export default {
     },
     components: {
         FontAwesomeIcon,
-        appComponentSummary: ComponentSummary
+        appExceptionSummary: ExceptionSummary
     }
 };
 </script>

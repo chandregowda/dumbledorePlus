@@ -1,19 +1,20 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import datacenterModule from './datacenterStore';
-import diskModule from './diskStore';
-import processModule from './processStore';
-import authModule from './authStore';
+import datacenterStore from './datacenterStore';
+import diskStore from './diskStore';
+import processStore from './processStore';
+import authStore from './authStore';
+import scannerStore from './scannerStore';
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   modules: {
-    // counterStore: counterModule,
-    authStore: authModule,
-    datacenterStore: datacenterModule,
-    diskStore: diskModule,
-    processStore: processModule
+    authStore,
+    datacenterStore,
+    diskStore,
+    processStore,
+    scannerStore
   }
 })
