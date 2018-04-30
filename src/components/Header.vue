@@ -1,18 +1,19 @@
 <template>
   <b-navbar toggleable="md" type="dark" variant="primary" fixed :sticky="stickyValue">
-    <b-navbar-brand href="#"><font-awesome-icon icon="space-shuttle" :rotation="270" /> {{title}}</b-navbar-brand>
+    <b-navbar-brand href="#"><span class="logo"><font-awesome-icon icon="crosshairs"/></span> {{title}}</b-navbar-brand>
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav class="ml-auto">
       <template v-if="isAuthenticated">
         <b-navbar-brand to="#" active-class="active" exact ><font-awesome-icon  size="sm" icon="user" /> {{user.displayName}}</b-navbar-brand>
-        <b-nav-item to="/home" active-class="active" exact >
+        <!-- <b-nav-item to="/home" active-class="active" exact >
             <font-awesome-icon  size="lg" icon="home" />
-        </b-nav-item>
-        <b-nav-item to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
-        <b-nav-item to="/process-summary" active-class="active" ><font-awesome-icon size="lg" icon="chart-pie" title="Process Summary"/></b-nav-item>
-        <b-nav-item to="/disk" active-class="active" ><font-awesome-icon size="lg" icon="dot-circle" /></b-nav-item>
-        <b-nav-item to="/datacenter" active-class="active" ><font-awesome-icon size="lg" icon="server" /></b-nav-item>
-        <button class='logout' @click='logout' >
+        </b-nav-item> -->
+        <b-nav-item v-b-popover.hover="'Build Details'" to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
+        <b-nav-item v-b-popover.hover="'Component Summary'" to="/process-summary" active-class="active" ><font-awesome-icon size="lg" icon="chart-pie" title="Process Summary"/></b-nav-item>
+        <b-nav-item v-b-popover.hover="'Exception Summaries'" to="/exception-report" active-class="active" ><font-awesome-icon size="lg" icon="list-ul" title="Exception Report"/></b-nav-item>
+        <!-- <b-nav-item to="/disk" active-class="active" ><font-awesome-icon size="lg" icon="dot-circle" /></b-nav-item>
+        <b-nav-item to="/datacenter" active-class="active" ><font-awesome-icon size="lg" icon="server" /></b-nav-item> -->
+        <button v-b-popover.hover="'Logout'" class='logout' @click='logout' >
             <font-awesome-icon  size="lg" icon="sign-out-alt" />
         </button>
       </template>
@@ -51,7 +52,7 @@ export default {
     }
 };
 </script>
-<style>
+<style scoped>
 .logout {
     background-color: transparent;
     border: none;
@@ -60,5 +61,9 @@ export default {
 }
 .logout:hover {
     color: rgba(255, 255, 255, 0.75);
+}
+.logo {
+    color: yellow;
+    font-size: 1.2em;
 }
 </style>

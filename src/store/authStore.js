@@ -5,7 +5,9 @@ import router from '../router/index';
 const authModule = {
   state: {
     userDetails: null,
-    token: null
+    token: null,
+    authError: null,
+    authenticating: false
   },
   mutations: {
     updateUserDetails: (state, userDetails) => {
@@ -17,13 +19,26 @@ const authModule = {
     updateAuthDetails: (state, payload) => {
       state.token = payload.token
       state.userDetails = payload.userDetails
+    },
+    updateFailure: (state, message = 'Login Failed, invalid Credentials') => {
+      state.authError = message
+    },
+    updateAuthAuthenticating: (state, value = false) => {
+      state.authenticating = value
     }
   },
   getters: {
     [actionTypes.AUTH_TOKEN_GETTER]: state => state.token,
-    [actionTypes.AUTH_USER_DETAILS_GETTER]: state => state.userDetails
+    [actionTypes.AUTH_USER_DETAILS_GETTER]: state => state.userDetails,
+    [actionTypes.AUTH_AUTHENTICATING_GETTER]: state => state.authenticating,
+    [actionTypes.AUTH_ERROR_GETTER]: state => state.authError
   },
   actions: {
+    [actionTypes.AUTH_START_AUTHENTICATION_ACTION]: ({
+      commit
+    }) => {
+      commit('updateAuthAuthenticating', true);
+    },
     [actionTypes.AUTH_SET_LOGOUT_TIMER]: ({
       commit,
       dispatch
@@ -44,10 +59,6 @@ const authModule = {
         userDetails: null
       })
       localStorage.clear()
-      // localStorage.removeItem('token')
-      // localStorage.removeItem('displayName')
-      // localStorage.removeItem('accountName')
-      // localStorage.removeItem('expirationDate')
       router.replace('/') // Now navigate to default login page
     },
     [actionTypes.AUTH_AUTO_LOGIN_ACTION]: ({
@@ -77,8 +88,21 @@ const authModule = {
       commit,
       dispatch
     }, payload) => {
+      commit('updateFailure', '');
       if (payload) {
+        commit('updateAuthAuthenticating', true); // Start of authentication
+
         axios.post('/login', payload).then(res => {
+          let data = res.data;
+          commit('updateAuthAuthenticating', false)
+          // console.log(data);
+          if (data.error) {
+            if (data.message === 'LOGIN_FAILURE') {
+              commit('updateFailure'); // set error message
+              return;
+            }
+          }
+
           commit('updateAuthDetails', {
             token: res.data.token,
             userDetails: res.data.details
@@ -96,7 +120,10 @@ const authModule = {
           axios.defaults.headers.common['x-access-token'] = res.data.token
 
           router.replace('/home') // Navigate to home page on successful login
-        }).catch(e => console.log(e))
+        }).catch(e => {
+          console.log(e)
+          commit('updateAuthAuthenticating', false)
+        })
       }
     },
     [actionTypes.AUTH_CREATE_USER_ACTION]: ({

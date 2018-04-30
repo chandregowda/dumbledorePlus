@@ -6,6 +6,7 @@ import Login from '@/components/Auth/Login'
 // import Dashboard from '@/components/Dashboard/Dashboard'
 import Process from '@/components/Process'
 import ProcessSummary from '@/components/ProcessSummary'
+import ExceptionReport from '@/components/ExceptionReport'
 import DatacenterProcessDetails from '@/components/DatacenterProcessDetails'
 import Disk from '@/components/Disk'
 import Datacenter from '@/components/Datacenter'
@@ -54,6 +55,18 @@ const routes = [{
     path: '/process-summary',
     name: 'ProcessSummary',
     component: ProcessSummary,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.AUTH_TOKEN_GETTER) {
+        next()
+      } else {
+        next('/')
+      }
+    }
+  },
+  {
+    path: '/exception-report',
+    name: 'ExceptionReport',
+    component: ExceptionReport,
     beforeEnter: (to, from, next) => {
       if (store.getters.AUTH_TOKEN_GETTER) {
         next()

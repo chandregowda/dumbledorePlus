@@ -1,10 +1,10 @@
 <template>
   <div class="container-fluid">
     <!-- <app-process-filters></app-process-filters> -->
-    <h3 class="mt-3"><font-awesome-icon class="mr-3" size="lg" icon="cubes" title="Process Details"/>Process Details</h3>
+    <h3 class="mt-3 text-info"><font-awesome-icon class="mr-3 text-primary" size="lg" icon="cubes" title="Process Details"/>Process Details</h3>
     <hr>
     <b-form inline>
-        <font-awesome-icon icon="filter" class="success"/>
+        <font-awesome-icon icon="filter" class="mr-2 text-warning"/>
         <b-form-select v-model="filters.environment" :options="envOptions" size="sm" />
         <b-form-select v-model="filters.datacenter" :options="filteredDataCenters" size="sm" />
         <b-form-input v-model="filters.ip" type="text" size="sm" placeholder="By SERVER" />
@@ -12,11 +12,12 @@
         <b-form-input v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
         <b-form-input v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
         <b-form-input v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
-        <b-button size="lg" class="ml-1" variant="link" @click="reload" :disabled="isLoading">
-          <font-awesome-icon icon="spinner" spin v-if="isLoading" /> <span v-if="isLoading" class="loading"> please wait...</span>
-          <font-awesome-icon icon="sync-alt" v-else/>
+        <b-button size="lg" class="ml-1" variant="link" @click="reload" :disabled="isLoading" v-b-popover.hover="'Refresh build details'" >
+          <!-- <font-awesome-icon icon="spinner" spin v-if="isLoading" />  -->
+          <font-awesome-icon icon="sync-alt" :spin="isLoading"/>
         </b-button>
     </b-form>
+    <h6>*<small class="text-muted hint">Filters work with regular expression, Ex: "city|fide" in COBRAND GROUP will find both City and Fidelity, 'Apr 28|Apr 29' in STARTED ON will find process started on both days </small></h6>
     <br/>
 
     <div class="process-details-container">
@@ -35,7 +36,7 @@
             {{data.index + 1}}
           </template>
           <template slot="show_more" slot-scope="row">
-            <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2 link-btn" variant="link">
+            <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn" variant="link">
               {{ row.detailsShowing ? 'Less &#65085;' : 'More &#65086;'}}
             </b-button>
           </template>
@@ -206,10 +207,12 @@ export default {
 
         let datacenters = this.$store.getters.DATACENTERS_GETTER;
         let oldProcessDetails = this.$store.getters.PROCESS_GETTER;
+        let isLoadingCompleted = this.$store.getters.PROCESS_FETCHING_GETTER;
+
         if (!datacenters || !datacenters.length) {
             this.$store.dispatch('DATACENTERS_FETCH_ACTION'); // get the datacenters, make sure 'x-access-token' is set
         }
-        if (!oldProcessDetails || !oldProcessDetails.length) {
+        if (!isLoadingCompleted && (!oldProcessDetails || !oldProcessDetails.length)) {
             this.$store.dispatch('PROCESS_GET_ALL_ACTION');
         }
     },
@@ -236,11 +239,13 @@ table.b-table > tfoot > tr > th.sorting,
     font-size: 12px !important;
     white-space: nowrap;
 }
-.link-btn {
+</style>
+<style scoped>
+#link-btn {
     font-size: 12px;
-    color: darkblue;
-    padding: 0;
+    padding: 0 !important;
 }
+
 .form-inline .form-control,
 select.form-control {
     font-size: 12px;
@@ -248,5 +253,8 @@ select.form-control {
 }
 .loading {
     font-size: 12px;
+}
+.hint {
+    font-style: italic;
 }
 </style>

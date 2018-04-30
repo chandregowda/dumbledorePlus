@@ -1,13 +1,17 @@
 import axios from 'axios'
 
+let timeout = 1000 * 60 * 60;
+axios.defaults.timeout = timeout;
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3100',
-  timeout: 1000000
+  // baseURL: 'http://localhost:3200'
+  baseURL: 'https://rti.corp.yodlee.com:3200'
   // baseURL: 'https://dumbledore.yodlee.com'
 })
 
+axiosInstance.defaults.timeout = timeout;
 export const axiosDumbledore = axios.create({
   baseURL: 'https://dumbledore.yodlee.com'
-})
+});
+axiosDumbledore.defaults.timeout = timeout;
 
 export default axiosInstance

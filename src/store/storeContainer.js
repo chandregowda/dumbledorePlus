@@ -5,7 +5,8 @@ import datacenterStore from './datacenterStore';
 import diskStore from './diskStore';
 import processStore from './processStore';
 import authStore from './authStore';
-import scannerStore from './scannerStore';
+import exceptionStore from './exceptionStore';
+// import scannerStore from './scannerStore';
 
 Vue.use(Vuex)
 
@@ -15,6 +16,6 @@ export const store = new Vuex.Store({
     datacenterStore,
     diskStore,
     processStore,
-    scannerStore
+    exceptionStore
   }
 })

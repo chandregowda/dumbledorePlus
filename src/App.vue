@@ -31,6 +31,17 @@ export default {
     /* margin-top: 60px; */
     padding: 0;
 }
+@media (min-width: 992px) {
+    .modal-lg {
+        max-width: 1200px;
+    }
+}
+#modal2.bigModal .modal-content,
+#modal2 div.modal-dialog.modal-lg,
+#modal2 div.modal-lg {
+    max-width: 1100px !important;
+    min-width: 890px !important;
+}
 /* SCROLL BAR CHANGE */
 /* width */
 ::-webkit-scrollbar {

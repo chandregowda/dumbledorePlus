@@ -12,48 +12,25 @@ import {
 } from './store/storeContainer'
 // import VueResource from 'vue-resource'
 
+// Import Bootstrap
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-// Import Bootstrap
 import BootstrapVue from 'bootstrap-vue'
-// import bModal from 'bootstrap-vue/es/components/modal/modal'
-// import bModalDirective from 'bootstrap-vue/es/directives/modal/modal'
 
 import fontawesome from '@fortawesome/fontawesome'
 import brands from '@fortawesome/fontawesome-free-brands'
 import solid from '@fortawesome/fontawesome-free-solid';
 
-// import faSpinner from '@fortawesome/fontawesome-free-solid/faSpinner'
-// import faSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
-// import faHome from '@fortawesome/fontawesome-free-solid/faHome';
-// import faUser from '@fortawesome/fontawesome-free-solid/faUser';
-// import faChessKing from '@fortawesome/fontawesome-free-solid/faChessKing';
-// import faDove from '@fortawesome/fontawesome-free-solid/faDove';
-// import faCubes from '@fortawesome/fontawesome-free-solid/faCubes';
-// import faDotCircle from '@fortawesome/fontawesome-free-solid/faDotCircle';
-// import faServer from '@fortawesome/fontawesome-free-solid/faServer';
-// import faSyncAlt from '@fortawesome/fontawesome-free-solid/faSyncAlt';
-// import faSpaceShuttle from '@fortawesome/fontawesome-free-solid/faSpaceShuttle';
-// import faChartPie from '@fortawesome/fontawesome-free-solid/faChartPie';
-// import faFilter from '@fortawesome/fontawesome-free-solid/faFilter';
-// import faSitemap from '@fortawesome/fontawesome-free-solid/faSitemap';
-// import faPhoenixFramework from '@fortawesome/fontawesome-free-solid/faPhoenixFramework';
-
-// fontawesome.library.add(brands, solid, faSpinner, faSignOutAlt, faHome, faUser, faChessKing, faDove, faCubes, faDotCircle, faServer, faSyncAlt, faSpaceShuttle, faChartPie, faFilter, faSitemap)
 fontawesome.library.add(brands, solid);
 
 Vue.use(BootstrapVue)
-// Vue.component('b-modal', bModal)
-// Vue.directive('b-modal', bModalDirective)
 
 Vue.use(Vuex)
-Vue.use(require('vue-moment'));
-// Vue.use(VueResource)
-// Vue.http.options.root = 'https://vuejs-http.firebaseio.com/'
+// Vue.use(require('vue-moment'));
 
 Vue.config.productionTip = false
 
-console.log('Starting APP')
+console.log('Dumbledore Plus APP initiated')
 
 /* eslint-disable no-new */
 new Vue({

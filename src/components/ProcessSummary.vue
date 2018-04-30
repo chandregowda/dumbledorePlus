@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid ">
-    <h3 class="mt-3"><font-awesome-icon class="mr-3" size="lg" icon="chart-pie" title="Process Summary"/>Process Summary</h3>
+    <h3 class="mt-3 text-info"><font-awesome-icon class="mr-3 text-primary" size="lg" icon="chart-pie" title="Process Summary"/>Process Summary</h3>
     <hr>
     <b-card no-body>
       <b-tabs small card v-model="tabIndex">
@@ -9,7 +9,7 @@
             <div class="card-deck">
               <div class="card" v-for="(dcDetails, dc) of details.datacenters" :key="dc">
                 <div class="card-body">
-                  <b-button size="md" variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
+                  <b-button size="md" v-b-popover.hover="'Click here for checking logs'"  variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
                     {{dc.toUpperCase()}}
                   </b-button>
                   <!-- <p class="h3 card-title">{{dc.toUpperCase()}}</p> -->
