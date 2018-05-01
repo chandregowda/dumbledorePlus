@@ -7,9 +7,10 @@ import processStore from './processStore';
 import authStore from './authStore';
 import exceptionStore from './exceptionStore';
 import TimeStore from './timeStore';
+import CobrandStore from './cobrandStore';
 // import scannerStore from './scannerStore';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   modules: {
@@ -18,6 +19,7 @@ export const store = new Vuex.Store({
     diskStore,
     processStore,
     exceptionStore,
-    TimeStore
+    TimeStore,
+    CobrandStore
   }
 })

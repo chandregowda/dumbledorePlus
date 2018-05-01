@@ -24,6 +24,7 @@
                 </b-nav-item> -->
                 <b-nav-item v-b-popover.hover="'Build Details'" to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
                 <b-nav-item v-b-popover.hover="'Component Summary'" to="/process-summary" active-class="active" ><font-awesome-icon size="lg" icon="chart-pie" title="Process Summary"/></b-nav-item>
+                <b-nav-item v-b-popover.hover="'Cobrand Details'" to="/cobrands" active-class="active" ><font-awesome-icon size="lg" icon="users" title="Cobrand Details"/></b-nav-item>
                 <b-nav-item v-b-popover.hover="'Exception Summaries'" to="/exception-report" active-class="active" ><font-awesome-icon size="lg" icon="list-ul" title="Exception Report"/></b-nav-item>
                 <!-- <b-nav-item to="/disk" active-class="active" ><font-awesome-icon size="lg" icon="dot-circle" /></b-nav-item>
                 <b-nav-item to="/datacenter" active-class="active" ><font-awesome-icon size="lg" icon="server" /></b-nav-item> -->

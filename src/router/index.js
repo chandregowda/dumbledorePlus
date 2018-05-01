@@ -11,9 +11,12 @@ import DatacenterProcessDetails from '@/components/DatacenterProcessDetails'
 import Disk from '@/components/Disk'
 import Datacenter from '@/components/Datacenter'
 import Home from '@/components/Home'
+import Cobrand from '@/components/Cobrand'
+
 import {
   store
 } from '../store/storeContainer'
+
 Vue.use(Router)
 
 const routes = [{
@@ -67,6 +70,18 @@ const routes = [{
     path: '/exception-report',
     name: 'ExceptionReport',
     component: ExceptionReport,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.AUTH_TOKEN_GETTER) {
+        next()
+      } else {
+        next('/')
+      }
+    }
+  },
+  {
+    path: '/cobrands',
+    name: 'Cobrand',
+    component: Cobrand,
     beforeEnter: (to, from, next) => {
       if (store.getters.AUTH_TOKEN_GETTER) {
         next()
