@@ -17,6 +17,7 @@ export default {
     },
     created() {
         this.$store.dispatch('AUTH_AUTO_LOGIN_ACTION');
+        this.$store.dispatch('START_TIMEZONE_TIMER');
     }
 };
 </script>
@@ -42,10 +43,16 @@ export default {
     max-width: 1100px !important;
     min-width: 890px !important;
 }
+
+button:disabled {
+    cursor: not-allowed;
+}
+
 /* SCROLL BAR CHANGE */
 /* width */
 ::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
 
 /* Track */

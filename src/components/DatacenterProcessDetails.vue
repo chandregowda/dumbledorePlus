@@ -13,9 +13,10 @@
         <font-awesome-icon icon="filter" class="mr-2 text-warning"/>
         <b-form-select class="small" v-model="filters.component" :options="componentOptions" size="sm" />
         <b-form-input class="small" v-model="filters.ip" type="text" size="sm" placeholder="By SERVER" />
+        <b-form-input class="small" v-model="filters.port" type="text" size="sm" placeholder="By PORT" />
         <b-form-input v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
-        <b-form-input class="small" v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
-        <b-form-input class="small" v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
+        <b-form-input class="medium" v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
+        <b-form-input class="medium" v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
         <b-form-input class="small" v-model="filters.pid" type="text" size="sm" placeholder="By PROCESS ID" />
         <b-btn size="sm" class="ml-1" variant="outline-info" v-b-modal.modal1 :disabled="isLoading">
           <font-awesome-icon icon="binoculars" /> {{scanActionText}}
@@ -24,40 +25,66 @@
       <h6 class="mt-1">*<small class="text-muted hint">Filters work with regular expression, Ex: "city|fide" in COBRAND GROUP will find both City and Fidelity, 'Apr 28|Apr 29' in STARTED ON will find process started on both days </small></h6>
       <h6 class="mt-1">*<small class="text-muted hint">Every instance visible below will be scanned, use filters if you need specific process</small></h6>
 
-      <!-- Modal Component -->
-      <b-modal ref="myModalRef" hide-footer id="modal1" title="Scan Options" v-model="modalShow">
-        <div class="my-1">
-          <div class="row">
-            <div class="col-3">
-              <b-form-group label="Log Type">
-                <b-form-radio-group id="logTypes" v-model="scanOptions.logType" name="radioSubComponent">
-                  <b-form-radio value="server">Server</b-form-radio>
-                  <b-form-radio value="core">Core</b-form-radio>
-                </b-form-radio-group>
-              </b-form-group>
-            </div>
-            <div class="col-3">
-              <b-form-group label="Search Date">
-                <b-form-input class="small" v-model.trim="scanOptions.searchDate" type="text" size="sm" placeholder="YYYY-MM-DD" />
-              </b-form-group>
-            </div>
-            <div class="col">
-              <b-form-group label="Search String (optional)">
-                <b-form-input v-model.trim="scanOptions.searchString" type="text" size="sm" placeholder="Search String" />
-              </b-form-group>
-            </div>
-          </div>
+      <b-form @submit="scanLogs" >
+        <b-modal ref="myModalRef" hide-footer id="modal1" title="Scan Options" v-model="modalShow">
+            <div class="my-1">
+                <div class="row mb-3">
+                    <b-col sm="4" class="legend-small">Log Type</b-col>
+                    <b-col >
+                        <b-form-radio-group id="logTypes" v-model="scanOptions.logType" name="radioSubComponent">
+                        <b-form-radio value="server">Server</b-form-radio>
+                        <b-form-radio value="core">Core</b-form-radio>
+                        </b-form-radio-group>
+                    </b-col>
+                </div>
 
-        </div>
-        <b-btn class="mt-3" variant="outline-info" block @click="scanLogs" :disabled="isLoading">
-          <font-awesome-icon icon="spinner" spin v-if="isLoading" /> <span v-if="isLoading" class="loading"> Scanning is in progress, please wait...</span>
-          <font-awesome-icon icon="binoculars" v-if="!isLoading" /> <span v-if="!isLoading" class="log-summary">{{scanText}}</span>
-        </b-btn>
-        <!-- <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Scan Now</b-btn> -->
-      </b-modal>
+                <div class="row mt-3">
+                    <div class="col">
+                        <b-row >
+                            <b-col sm="4" class="legend-small">Logs modified on</b-col>
+                            <b-col sm="3">
+                                <b-form-input class="small" v-model.trim="scanOptions.searchDate" type="text" size="sm" placeholder="YYYY-MM-DD" />
+                            </b-col>
+                            <b-col >
+                                <b-form-text class="text-muted">
+                                    <b>PST:</b> {{losAngelesTime}}
+                                </b-form-text>
+                            </b-col>
+                        </b-row>
+                        <b-row >
+                            <b-col sm="4" class="legend-small">Logs modified since</b-col>
+                            <b-col >
+                                <b-form-input size="sm" type="range" :max="max" :min="min" v-model="lastModifiedSinceHrs"></b-form-input>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col class="col">
+                                <b-progress  :value="lastModifiedSince" class="w-100 mt-3"></b-progress>
+                            </b-col>
+                        </b-row>
+                        <h6 class="mt-1">*<small class="text-muted hint">Files modified in last <b>{{lastModifiedSinceHrs}}</b> hours will be scanned</small></h6>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <b-form-group>
+                            <b-form-text class="legend-small">Search string</b-form-text>
+                            <b-form-input v-model.trim="scanOptions.searchString" type="text" size="sm" placeholder="RegEx supported, avoid quotes" />
+                            <h6 class="mt-1">*<small class="text-muted hint">By default, all 'xceptions', 'ORA-', 'failed', strings are searched</small></h6>
+                        </b-form-group>
+                    </div>
+                </div>
+            </div>
+            <h6><small class="text-muted hint">* NOTE: Consider Server timezone while selecting dates to scan.</small></h6>
+            <b-btn class="mt-3" variant="outline-info" block type="submit" :disabled="isLoading">
+            <font-awesome-icon icon="spinner" spin v-if="isLoading" /> <span v-if="isLoading" class="loading"> Scanning is in progress, please wait...</span>
+            <font-awesome-icon icon="binoculars" v-if="!isLoading" /> <span v-if="!isLoading" class="log-summary">{{scanText}}</span>
+            </b-btn>
+            <!-- <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Scan Now</b-btn> -->
+        </b-modal>
+      </b-form>
 
       <div class="ml-3">
-        <!-- Modal Component -->
         <b-modal ref="resultModalRef" size="lg" class="bigModal" hide-footer id="modal2" title="Scan Summary Report" v-model="resultmodalShow">
           <app-exception-summary :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions"/>
           <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Analysis Completed</b-btn>
@@ -89,12 +116,17 @@ import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import ExceptionSummary from './ExceptionSummary';
 import axios from '../axios-auth';
 import * as utils from '../assets/appUtils';
-import moment from 'moment';
+import moment from 'moment-timezone';
+
+// import font from url('https://fonts.googleapis.com/css?family=Roboto+Condensed:400|Roboto:100');
 
 export default {
     props: ['dcInfo'],
     data() {
         return {
+            lastModifiedSinceHrs: 24,
+            max: 24,
+            min: 1,
             isLoading: false,
             modalShow: false,
             resultmodalShow: false,
@@ -110,6 +142,7 @@ export default {
                 environment: this.dcInfo.environment,
                 datacenter: this.dcInfo.dc,
                 ip: '',
+                port: '',
                 component: '',
                 cobrandGroup: '',
                 build: '',
@@ -131,10 +164,12 @@ export default {
                 },
                 {
                     key: 'instance',
-                    sortable: false,
                     label: 'Inst'
                 },
-                { key: 'component', sortable: false },
+                {
+                    key: 'port'
+                },
+                // { key: 'component', sortable: false },
                 { key: 'cobrandGroup', sortable: true },
                 { key: 'build', sortable: true },
                 { key: 'processStartDate', sortable: false, label: 'Started On (PST)' },
@@ -165,7 +200,9 @@ export default {
         };
     },
     methods: {
-        scanLogs() {
+        scanLogs(evt) {
+            evt.preventDefault();
+
             this.isLoading = true;
             this.scanActionText = 'Scanning in progress';
             let processInfo = this.filteredDetails.map(processDetails => {
@@ -189,7 +226,6 @@ export default {
                     logPath: '/var/log'
                 })
                 .then(result => {
-                    console.log('Got result', result);
                     this.exceptionDetails = result.data;
                     this.isLoading = false;
                     this.scanActionText = 'Scan Options';
@@ -218,6 +254,12 @@ export default {
         //     let isLoadingCompleted = this.$store.getters.PROCESS_FETCHING_GETTER;
         //     return isLoadingCompleted;
         // },
+        lastModifiedSince() {
+            return parseInt(100 / 24 * this.lastModifiedSinceHrs);
+        },
+        losAngelesTime() {
+            return this.$store.getters.GET_LOSANGELES_TIME;
+        },
         filteredDetails() {
             let filters = this.filters;
             let data = this.$store.getters.PROCESS_GETTER;
@@ -289,5 +331,15 @@ select.form-control {
 }
 .hint {
     font-style: italic;
+}
+.legend-small {
+    font-size: 12px;
+    font-weight: bold;
+}
+input[type='text'].small {
+    width: 120px;
+}
+input[type='medium'].small {
+    width: 150px;
 }
 </style>

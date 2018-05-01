@@ -1,23 +1,37 @@
 <template>
   <b-navbar toggleable="md" type="dark" variant="primary" fixed :sticky="stickyValue">
-    <b-navbar-brand href="#"><span class="logo"><font-awesome-icon icon="crosshairs"/></span> {{title}}</b-navbar-brand>
+    <b-navbar-brand href="#">
+        <span class="logo"><font-awesome-icon icon="crosshairs"/></span> {{title}}
+    </b-navbar-brand>
     <b-collapse is-nav id="nav_collapse">
-      <b-navbar-nav class="ml-auto">
-      <template v-if="isAuthenticated">
-        <b-navbar-brand to="#" active-class="active" exact ><font-awesome-icon  size="sm" icon="user" /> {{user.displayName}}</b-navbar-brand>
-        <!-- <b-nav-item to="/home" active-class="active" exact >
-            <font-awesome-icon  size="lg" icon="home" />
-        </b-nav-item> -->
-        <b-nav-item v-b-popover.hover="'Build Details'" to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
-        <b-nav-item v-b-popover.hover="'Component Summary'" to="/process-summary" active-class="active" ><font-awesome-icon size="lg" icon="chart-pie" title="Process Summary"/></b-nav-item>
-        <b-nav-item v-b-popover.hover="'Exception Summaries'" to="/exception-report" active-class="active" ><font-awesome-icon size="lg" icon="list-ul" title="Exception Report"/></b-nav-item>
-        <!-- <b-nav-item to="/disk" active-class="active" ><font-awesome-icon size="lg" icon="dot-circle" /></b-nav-item>
-        <b-nav-item to="/datacenter" active-class="active" ><font-awesome-icon size="lg" icon="server" /></b-nav-item> -->
-        <button v-b-popover.hover="'Logout'" class='logout' @click='logout' >
-            <font-awesome-icon  size="lg" icon="sign-out-alt" />
-        </button>
-      </template>
-    </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+            <template v-if="isAuthenticated">
+                <b-navbar-brand to="#" active-class="active" exact >
+                    <b-row>
+                        <b-col>
+                            <font-awesome-icon  size="sm" icon="user" /> {{user.displayName}}
+                            <span class='m-2 active pst-time'>PST : {{losAngelesTime}}</span>
+                        </b-col>
+                    </b-row>
+                    <!-- <b-row>
+                        <b-col class='active pst-time'>
+                            PST : {{losAngelesTime}}
+                        </b-col>
+                    </b-row> -->
+                </b-navbar-brand>
+                <!-- <b-nav-item to="/home" active-class="active" exact >
+                    <font-awesome-icon  size="lg" icon="home" />
+                </b-nav-item> -->
+                <b-nav-item v-b-popover.hover="'Build Details'" to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
+                <b-nav-item v-b-popover.hover="'Component Summary'" to="/process-summary" active-class="active" ><font-awesome-icon size="lg" icon="chart-pie" title="Process Summary"/></b-nav-item>
+                <b-nav-item v-b-popover.hover="'Exception Summaries'" to="/exception-report" active-class="active" ><font-awesome-icon size="lg" icon="list-ul" title="Exception Report"/></b-nav-item>
+                <!-- <b-nav-item to="/disk" active-class="active" ><font-awesome-icon size="lg" icon="dot-circle" /></b-nav-item>
+                <b-nav-item to="/datacenter" active-class="active" ><font-awesome-icon size="lg" icon="server" /></b-nav-item> -->
+                <button v-b-popover.hover="'Logout'" class='logout' @click='logout' >
+                    <font-awesome-icon  size="lg" icon="sign-out-alt" />
+                </button>
+            </template>
+        </b-navbar-nav>
     </b-collapse>
   </b-navbar>
 </template>
@@ -40,6 +54,9 @@ export default {
             // console.log(this.$store.getters.AUTH_USER_DETAILS_GETTER);
             let details = this.$store.getters.AUTH_USER_DETAILS_GETTER;
             return { displayName: '', ...details };
+        },
+        losAngelesTime() {
+            return this.$store.getters.GET_LOSANGELES_TIME;
         }
     },
     methods: {
@@ -65,5 +82,9 @@ export default {
 .logo {
     color: yellow;
     font-size: 1.2em;
+}
+.pst-time {
+    color: white;
+    font-size: 12px;
 }
 </style>

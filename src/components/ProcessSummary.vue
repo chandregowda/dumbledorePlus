@@ -9,7 +9,7 @@
             <div class="card-deck">
               <div class="card" v-for="(dcDetails, dc) of details.datacenters" :key="dc">
                 <div class="card-body">
-                  <b-button size="md" v-b-popover.hover="'Click here for checking logs'"  variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
+                  <b-button size="md" v-b-popover.hover="'Click here for scanning logs'"  variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
                     {{dc.toUpperCase()}}
                   </b-button>
                   <!-- <p class="h3 card-title">{{dc.toUpperCase()}}</p> -->

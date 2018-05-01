@@ -2,61 +2,17 @@
   <div>
     <div>
         <p class="h5 text-info text-center">
-        Summary of {{filters.environment.toUpperCase()}} <span class="highlight">{{filters.datacenter.toUpperCase()}}</span> datacenter
-        <span class="component"> {{filters.component}} </span> component.
+        {{filters.environment.toUpperCase()}} <span class="highlight">{{filters.datacenter.toUpperCase()}}</span> datacenter
+        <span class="component"> {{filters.component}} </span> component
         </p>
         <p class="h6 text-center">
           <small>Searched for <span class="highlight"> {{scanOptions.searchDate}} </span> with {{scanOptions.searchString||'default search string'}}</small>
         </p>
-      <div v-if="hasDownloads">
-
-        <b-card header="Detailed Files for Analysis "
-                header-tag="header"
-                footer="* Use 7z or Winrar application to view gzipped files (gz)"
-                footer-tag="footer"
-                border-variant="info"
-                header-bg-variant="info"
-                header-text-variant="white"
-                header-class="analysis-header"
-                footer-class="analysis-footer"
-            >
-            <p class="mb-1 card-text" v-for="(fileObj, index) in exceptionFileNameList" :key="index">
-              <small v-b-popover.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'" >
-              <a :href="fileObj.url" target="_blank">
-                <font-awesome-icon icon="download" class="ml-2"/>
-                {{fileObj.type.toUpperCase()}} log for {{fileObj.ip}} instance {{fileObj.instance}}
-              </a>
-            </small>
-            </p>
-        </b-card>
-        <br>
-        <!-- <p class="h6">Downloaded Files</p>
-        <ul>
-          <li v-for="(fileObj, index) in exceptionFileNameList" :key="index">
-            <small v-b-popover.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'" >
-              <a :href="fileObj.url" target="_blank">
-                <font-awesome-icon icon="download" class="ml-2"/>
-                {{fileObj.type.toUpperCase()}} log for {{fileObj.ip}} instance {{fileObj.instance}}
-              </a>
-            </small>
-          </li>
-        </ul> -->
-        <!-- <b-table :items="exceptionFileNameList" :fields="downloadedFilefields"
-          show-empty
-          striped
-          bordered
-          small
-          hover
-          responsive="true"
-          head-variant="light" >
-          <template slot="index" slot-scope="data">
-              {{data.index + 1}}
-          </template>
-        </b-table> -->
-
+      <div v-if="hasDownloads" class="mb-1">
+        <app-downloaded-files :exceptionFileNameList="exceptionFileNameList" />
       </div>
     </div>
-    <section class="card-text">
+    <section class="card-text table-responsive">
       <b-table :items="exceptionDetails" :fields="fields"
       show-empty
       striped
@@ -65,13 +21,31 @@
       hover
       responsive="true"
       head-variant="light" >
-      <template slot="actions" slot-scope="cell">
-        <!-- We use click.stop here to prevent a 'row-clicked' event from also happening -->
-        <!-- <b-btn size="sm" class="downloadLink" variant="link" @click.stop="download(cell.item,cell.index,$event.target)"><font-awesome-icon icon="download"/></b-btn> -->
-        <b-btn size="sm" class="downloadLink" :disabled="downloading"  variant="link" @click.stop="download(cell.item)">
-          <font-awesome-icon icon="file-medical-alt" v-b-popover.hover="'Extract Exceptions'" v-if="!downloading"/>
-          <span v-else><font-awesome-icon icon="spinner" spin/></span>
-        </b-btn>
+      <template slot="show_more" slot-scope="row">
+        <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn" variant="link">
+          {{ row.detailsShowing ? '&#65085;' : '&#65086;'}}
+        </b-button>
+      </template>
+      <template slot="row-details" slot-scope="row">
+        <b-card>
+          <b-row>
+            <b-col>
+              <span class="mr-2"><b>IP: </b>{{row.item.ip}}</span>
+              <span class="mr-2"><b>Instance: </b>{{row.item.instance}}</span>
+              <span class="mr-2"><b>Number of occurrence: </b>{{row.item.count}}</span>
+              <span class="mr-2"><b>Log File name: </b>{{row.item.filename}}</span>
+            </b-col>
+          </b-row>
+          <b-row class="mt-2">
+            <b-col>
+              <b>Searched Result: </b><pre class="exception-details">{{row.item.exception}}</pre>
+            </b-col>
+          </b-row>
+          <b-button size="sm" @click="row.toggleDetails" variant="outline-info">Hide Details</b-button>
+          <b-button size="sm" :disabled="downloading"  @click="download(row.item)" variant="outline-info">
+             <font-awesome-icon icon="spinner" spin v-if="downloading"/> {{downloading ? 'Extracting Stack Trace...' : 'Extract Stack Trace'}}
+          </b-button>
+        </b-card>
       </template>
       </b-table>
     </section>
@@ -80,31 +54,15 @@
 <script>
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import * as appUtils from '../assets/appUtils';
-
+import DownloadedFiles from './DownloadedFiles';
 export default {
     props: ['exceptionDetails', 'filters', 'scanOptions'],
     data() {
         return {
             exceptionFileNameList: [],
             downloading: false,
-            downloadedFilefields: [
-                {
-                    key: 'index',
-                    label: 'Sl'
-                    /* , variant: 'info' */
-                },
-                { key: 'ip' },
-                { key: 'instance' },
-                { key: 'type' },
-                {
-                    key: 'url',
-                    label: 'DOWNLOAD',
-                    formatter: value => {
-                        return <a href="{{value}}" />;
-                    }
-                }
-            ],
             fields: [
+                { key: 'show_more', label: 'More' },
                 {
                     key: 'ip',
                     sortable: true
@@ -116,20 +74,21 @@ export default {
                     key: 'count',
                     sortable: true
                 },
-                {
-                    key: 'exception',
-                    sortable: true
-                },
+                // { key: 'actions', label: 'Extract' },
                 {
                     key: 'filename',
                     label: 'Log File Path'
                 },
-                { key: 'actions', label: 'Detailed Log' }
+                {
+                    key: 'exception',
+                    sortable: true
+                }
             ]
         };
     },
     components: {
-        FontAwesomeIcon
+        FontAwesomeIcon,
+        appDownloadedFiles: DownloadedFiles
     },
     computed: {
         hasDownloads() {
@@ -188,8 +147,9 @@ export default {
                     this.exceptionFileNameList.push({
                         url,
                         type: splits[2],
-                        ip: splits[3],
-                        instance: splits[4]
+                        ip: splits[3].replace(/_/g, '.'),
+                        instance: splits[4],
+                        component: splits[5]
                     });
                     this.downloading = false;
                 })
@@ -200,6 +160,10 @@ export default {
 </script>
 
 <style scoped>
+#link-btn {
+    font-size: 12px;
+    padding: 0 !important;
+}
 .highlight {
     color: red;
 }
@@ -212,15 +176,10 @@ export default {
     margin: 0;
     line-height: 0;
 }
-.analysis-header {
-    font-size: 14px;
-    line-height: 14px;
-    padding: 10px;
-}
-.analysis-footer {
+.exception-details {
     font-size: 12px;
-    font-style: italic;
-    line-height: 12px;
-    padding: 10px;
+}
+button:disabled {
+    cursor: not-allowed;
 }
 </style>

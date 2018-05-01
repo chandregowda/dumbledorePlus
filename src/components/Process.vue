@@ -65,7 +65,7 @@
               <b-row class="mb-2">
                 <b-col><pre>{{ row.item.command.split(',').join('\n\t').split(' ').join('\n') }}</pre></b-col>
               </b-row>
-              <b-button size="sm" @click="row.toggleDetails">Hide Details</b-button>
+              <b-button size="sm" @click="row.toggleDetails" variant="outline-info">Hide Details</b-button>
             </b-card>
           </template>
       </b-table>
