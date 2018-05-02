@@ -2,6 +2,7 @@
   <div class="container-fluid">
     <!-- <app-process-filters></app-process-filters> -->
     <h3 class="mt-3 text-info"><font-awesome-icon class="mr-3 text-primary" size="lg" icon="users" title="Cobrand Details"/>Cobrand Details</h3>
+    <hr>
     <b-row align-h="center">
       <b-col align-self="center" cols="6">
         <b-form inline>
@@ -93,7 +94,9 @@ export default {
         FontAwesomeIcon
     },
     created() {
-        this.$store.dispatch('COBRANDS_FETCH_ACTION');
+        if (!this.$store.getters.COBRANDS_GETTER && !this.$store.getters.COBRANDS_LOADING_STATUS_GETTER) {
+            this.$store.dispatch('COBRANDS_FETCH_ACTION');
+        }
     }
 };
 </script>

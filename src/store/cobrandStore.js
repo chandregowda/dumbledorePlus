@@ -8,7 +8,7 @@ const cobrandModule = {
     error: false
   },
   mutations: {
-    updateDatacenters: (state, cobrands) => {
+    updateCobrands: (state, cobrands) => {
       state.cobrands = cobrands
     },
     updateLoadingStatus: (state, status = false) => {
@@ -33,7 +33,7 @@ const cobrandModule = {
       console.log('Getting Cobrand details')
       axios.post('/cobrand/get').then(res => {
         console.log('Got cobrand details');
-        commit('updateDatacenters', res.data);
+        commit('updateCobrands', res.data);
         commit('updateLoadingStatus');
         commit('updateError');
       }).catch(e => {
