@@ -22,11 +22,11 @@
           <font-awesome-icon icon="binoculars" /> {{scanActionText}}
         </b-btn>
       </b-form>
-      <h6 class="mt-1">*<small class="text-muted hint">Filters work with regular expression, Ex: "city|fide" in COBRAND GROUP will find both City and Fidelity, 'Apr 28|Apr 29' in STARTED ON will find process started on both days </small></h6>
-      <h6 class="mt-1">*<small class="text-muted hint">Every instance visible below will be scanned, use filters if you need specific process</small></h6>
+      <h6 class="mt-1">*<small class="text-danger hint">Filters work with regular expression, Ex: "city|fide" in COBRAND GROUP will find both City and Fidelity, 'Apr 28|Apr 29' in STARTED ON will find process started on both days </small></h6>
+      <h6 class="mt-1">*<small class="text-danger hint">Every instance visible below will be scanned, use filters if you need specific process</small></h6>
 
       <b-form @submit="scanLogs" >
-        <b-modal ref="myModalRef" hide-footer id="modal1" title="Scan Options" v-model="modalShow">
+        <b-modal ref="myModalRef" hide-footer id="modal1" :title="modalTitle" v-model="modalShow">
             <div class="my-1">
                 <div class="row mb-3">
                     <b-col sm="4" class="legend-small">Log Type</b-col>
@@ -62,23 +62,27 @@
                                 <b-progress  :value="lastModifiedSince" class="w-100 mt-3"></b-progress>
                             </b-col>
                         </b-row>
-                        <h6 class="mt-1">*<small class="text-muted hint">Files modified in last <b>{{lastModifiedSinceHrs}}</b> hours will be scanned</small></h6>
+                        <h6 class="mt-1"><small class="text-danger hint">Files modified in last <b>{{lastModifiedSinceHrs}}</b> hours will be scanned</small></h6>
                     </div>
                 </div>
                 <div class="row mt-3">
                     <div class="col">
                         <b-form-group>
-                            <b-form-text class="legend-small">Search string</b-form-text>
+                            <b-form-text class="legend-small">Search string optional</b-form-text>
                             <b-form-input v-model.trim="scanOptions.searchString" type="text" size="sm" placeholder="RegEx supported, avoid quotes" />
-                            <h6 class="mt-1">*<small class="text-muted hint">By default, all 'xceptions', 'ORA-', 'failed', strings are searched</small></h6>
+                            <h6 class="mt-1"><small class="text-danger hint">By default, all 'xceptions', 'ORA-', 'failed', strings are searched</small></h6>
                         </b-form-group>
                     </div>
                 </div>
             </div>
-            <h6><small class="text-muted hint">* NOTE: Consider Server timezone while selecting dates to scan.</small></h6>
+            <h6><small class="text-danger hint">NOTE: Consider Server timezone while selecting dates to scan.</small></h6>
             <b-btn class="mt-3" variant="outline-info" block type="submit" :disabled="isLoading">
-            <font-awesome-icon icon="spinner" spin v-if="isLoading" /> <span v-if="isLoading" class="loading"> Scanning is in progress, please wait...</span>
-            <font-awesome-icon icon="binoculars" v-if="!isLoading" /> <span v-if="!isLoading" class="log-summary">{{scanText}}</span>
+                <template v-if="isLoading">
+                    <font-awesome-icon icon="spinner" spin /> Scanning is in progress since <app-timer />
+                </template>
+                <template v-else>
+                    <font-awesome-icon icon="binoculars" /> {{scanText}}
+                </template>
             </b-btn>
             <!-- <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Scan Now</b-btn> -->
         </b-modal>
@@ -117,6 +121,7 @@ import ExceptionSummary from './ExceptionSummary';
 import axios from '../axios-auth';
 import * as utils from '../assets/appUtils';
 import moment from 'moment-timezone';
+import Timer from './Timer';
 
 // import font from url('https://fonts.googleapis.com/css?family=Roboto+Condensed:400|Roboto:100');
 
@@ -194,7 +199,7 @@ export default {
             ],
             scanOptions: {
                 logType: 'server',
-                searchDate: moment().format('YYYY-MM-DD'),
+                searchDate: null, // moment().format('YYYY-MM-DD'),
                 searchString: ''
             }
         };
@@ -234,6 +239,7 @@ export default {
                         setTimeout(() => {
                             this.resultmodalShow = true;
                         }, 1000);
+                        this.scanText = 'Scan Now';
                     } else {
                         this.scanText = `Scan Completed with ZERO search results`;
                     }
@@ -250,15 +256,19 @@ export default {
         }
     },
     computed: {
-        // isLoading() {
-        //     let isLoadingCompleted = this.$store.getters.PROCESS_FETCHING_GETTER;
-        //     return isLoadingCompleted;
-        // },
+        modalTitle() {
+            return `Scan ${this.filters.component} logs`;
+        },
         lastModifiedSince() {
             return parseInt(100 / 24 * this.lastModifiedSinceHrs);
         },
         losAngelesTime() {
             return this.$store.getters.GET_LOSANGELES_TIME;
+        },
+        losAngelesDate() {
+            return this.$store.timeStore
+                ? this.$store.timeStore.losAngeles.format('YYYY-MM-DD')
+                : moment().format('YYYY-MM');
         },
         filteredDetails() {
             let filters = this.filters;
@@ -306,10 +316,12 @@ export default {
         this.filters.environment = this.dcInfo.environment;
         this.filters.datacenter = this.dcInfo.dc;
         this.filters.component = this.componentOptions[0].value || '';
+        this.scanOptions.searchDate = this.$store.state.TimeStore.losAngeles.format('YYYY-MM-DD');
     },
     components: {
         FontAwesomeIcon,
-        appExceptionSummary: ExceptionSummary
+        appExceptionSummary: ExceptionSummary,
+        appTimer: Timer
     }
 };
 </script>
@@ -329,8 +341,10 @@ select.form-control {
         min-width: 890px !important;
     }
 }
-.hint {
+.hint,
+small.text-muted {
     font-style: italic;
+    /* color: tomato !important; */
 }
 .legend-small {
     font-size: 12px;

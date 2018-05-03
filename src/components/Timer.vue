@@ -1,43 +1,41 @@
 <template>
-  <span class="timer">{{now}}</span>
+  <span class="timer text-danger">{{ellapsedTime}}</span>
 </template>
 
 <script>
+import moment from 'moment-timezone';
+
 export default {
     data() {
         return {
-            now: 0,
-            timerHandler: null
+            ellapsedMoment: null
         };
     },
-    method: {
-        startTimer() {
-            console.log('Starting Timer');
-            let starter = new Date().getTime();
-            this.timerHandler = setInterval(() => {
-                let current = new Date().getTime();
-                this.now = parseFloat(current - starter);
-            }, 500);
-        },
-        stopTimer() {
-            console.log('Clearing Interval');
-            clearInterval(this.timerHandler);
+    destroyed() {
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.ellapsedMoment = null;
         }
     },
-    destroyed() {
-        this.stopTimer();
+    computed: {
+        ellapsedTime() {
+            return this.ellapsedMoment ? this.ellapsedMoment.format('HH:mm:ss') : '00:00:00';
+        }
+    },
+    mounted() {
+        this.timer = setInterval(() => {
+            if (!this.ellapsedMoment) {
+                this.ellapsedMoment = moment('2018-01-01');
+            }
+            this.ellapsedMoment = moment(this.ellapsedMoment).add(1, 's');
+        }, 1000);
     }
-    // computed: {
-    //   currentTime () {
-    //     setInterval
-    //   }
-    // }
 };
 </script>
 
 <style scoped>
 .timer {
     font-style: italic;
-    font-size: 10px;
+    font-size: 12px;
 }
 </style>

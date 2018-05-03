@@ -43,7 +43,12 @@
           </b-row>
           <b-button size="sm" @click="row.toggleDetails" variant="outline-info">Hide Details</b-button>
           <b-button size="sm" :disabled="downloading"  @click="download(row.item)" variant="outline-info">
-             <font-awesome-icon icon="spinner" spin v-if="downloading"/> {{downloading ? 'Extracting Stack Trace...' : 'Extract Stack Trace'}}
+            <template v-if="downloading">
+             <font-awesome-icon icon="spinner" spin /> Extracting Stack Trace since <app-timer />
+            </template>
+            <template v-else>
+              Extract Stack Trace
+            </template>
           </b-button>
         </b-card>
       </template>
@@ -51,10 +56,13 @@
     </section>
   </div>
 </template>
+
 <script>
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import * as appUtils from '../assets/appUtils';
 import DownloadedFiles from './DownloadedFiles';
+import Timer from './Timer';
+
 export default {
     props: ['exceptionDetails', 'filters', 'scanOptions'],
     data() {
@@ -88,7 +96,8 @@ export default {
     },
     components: {
         FontAwesomeIcon,
-        appDownloadedFiles: DownloadedFiles
+        appDownloadedFiles: DownloadedFiles,
+        appTimer: Timer
     },
     computed: {
         hasDownloads() {
@@ -113,9 +122,9 @@ export default {
                 searchString
             } = this.scanOptions;
 
-            console.log('Item:', item);
-            console.log('Filters', this.filters);
-            console.log('ScanOptions', this.scanOptions);
+            // console.log('Item:', item);
+            // console.log('Filters', this.filters);
+            // console.log('ScanOptions', this.scanOptions);
 
             appUtils
                 .downloadLogFile({

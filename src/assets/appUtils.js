@@ -23,7 +23,7 @@ export const downloadLogFile = function (options) {
   // console.log('Download Options', JSON.stringify(options, undefined, 2))
   return new Promise((resolve, reject) => {
     axios.post('/exception/downloadLogFile', options).then(r => {
-      console.log('Downloading Completed', r);
+      // console.log('Downloading Completed', r);
       resolve(r.data);
     }).catch(e => {
       console.log('Failed to generate Exception Log Summary', e);
