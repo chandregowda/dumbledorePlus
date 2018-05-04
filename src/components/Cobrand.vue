@@ -4,7 +4,7 @@
     <h3 class="mt-3 text-info"><font-awesome-icon class="mr-3 text-primary" size="lg" icon="users" title="Cobrand Details"/>Cobrand Details</h3>
     <hr>
     <b-row align-h="center">
-      <b-col align-self="center" cols="6">
+      <b-col align-self="center" cols="10">
         <b-form inline>
             <font-awesome-icon icon="filter" class="mr-2 text-warning"/>
             <b-form-input class="mr-2" v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
@@ -16,7 +16,7 @@
     </b-row>
     <br/>
     <b-row align-h="center">
-        <b-col align-self="center" cols="6">
+        <b-col align-self="center" cols="10">
             <b-table
                 show-empty
                 striped

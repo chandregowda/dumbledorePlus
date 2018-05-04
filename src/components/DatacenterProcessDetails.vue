@@ -224,6 +224,7 @@ export default {
                     mailTo: from + '@yodlee.com',
                     environments: [this.dcInfo.environment],
                     datacenters: [this.dcInfo.dc],
+                    component: this.filters.component,
                     logType: this.scanOptions.logType,
                     searchString: this.scanOptions.searchString,
                     searchDate: this.scanOptions.searchDate || moment().format('YYYY-MM-DD'),

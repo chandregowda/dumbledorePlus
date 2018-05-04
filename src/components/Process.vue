@@ -14,7 +14,7 @@
         <b-form-input v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
         <b-button size="lg" class="ml-1" variant="link" @click="reload" :disabled="isLoading" v-b-popover.hover="'Refresh build details'" >
           <!-- <font-awesome-icon icon="spinner" spin v-if="isLoading" />  -->
-          <font-awesome-icon icon="sync-alt" :spin="isLoading"/>
+          <font-awesome-icon icon="sync-alt" :spin="isLoading"/> <app-timer v-if="isLoading"/>
         </b-button>
     </b-form>
     <h6>*<small class="text-muted hint">Filters work with regular expression, Ex: "city|fide" in COBRAND GROUP will find both City and Fidelity, 'Apr 28|Apr 29' in STARTED ON will find process started on both days </small></h6>
@@ -77,6 +77,7 @@
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import axios from '../axios-auth';
 import * as utils from '../assets/appUtils';
+import Timer from './Timer';
 
 export default {
     data() {
@@ -224,7 +225,8 @@ export default {
         }
     },
     components: {
-        FontAwesomeIcon
+        FontAwesomeIcon,
+        appTimer: Timer
     }
 };
 </script>

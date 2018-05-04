@@ -5,7 +5,6 @@ axios.defaults.timeout = timeout;
 const axiosInstance = axios.create({
   // baseURL: 'http://localhost:3200'
   baseURL: 'https://rti.corp.yodlee.com:3200'
-  // baseURL: 'https://dumbledore.yodlee.com'
 })
 
 axiosInstance.defaults.timeout = timeout;

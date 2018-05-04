@@ -19,6 +19,25 @@
                 <template slot="index" slot-scope="data">
                     {{data.index + 1}}
                 </template>
+                <template slot="show_more" slot-scope="row">
+                    <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn" variant="link">
+                    {{ row.detailsShowing ? 'Less &#65085;' : 'More &#65086;'}}
+                    </b-button>
+                </template>
+                <template slot="row-details" slot-scope="row">
+                    <b-card>
+                        <!-- <b-row>
+                            <b-col>{{row.item.summary}}</b-col>
+                        </b-row> -->
+                        <b-row>
+                          <b-col class="">
+                            <app-exception-summary :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters"/>
+                          </b-col>
+                        </b-row>
+                        <b-button size="sm" @click="row.toggleDetails" variant="outline-info">Hide Details</b-button>
+                    </b-card>
+                </template>
+
             </b-table>
         </div>
     </div>
@@ -28,6 +47,10 @@
 <script>
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import axios from '../axios-auth';
+import ExceptionSummary from './ExceptionSummary';
+// import * as utils from '../assets/appUtils';
+// import Timer from './Timer';
+
 export default {
     data() {
         return {
@@ -49,16 +72,17 @@ export default {
                 },
                 {
                     key: 'filters',
-                    formatter: value => {
-                        // function ()
-                        return JSON.stringify(value, undefined, 2);
+                    formatter: filters => {
+                        let f = filters;
+                        let content = `${f.logType.toUpperCase()} log for ${f.environment.toUpperCase()} 
+                        ${f.datacenter} datacenter, ${f.component} component generated for ${f.searchDate}`;
+                        return content;
+                        // return JSON.stringify(value, undefined, 2);
                     }
-                }
+                },
+                { key: 'show_more', label: 'Details' }
             ]
         };
-    },
-    components: {
-        FontAwesomeIcon
     },
     computed: {
         getExceptionReports() {
@@ -68,6 +92,17 @@ export default {
     created() {
         axios.defaults.headers.common['x-access-token'] = localStorage.getItem('token');
         this.$store.dispatch('EXCEPTIONS_FETCH_ACTION');
+    },
+    components: {
+        FontAwesomeIcon,
+        appExceptionSummary: ExceptionSummary
     }
 };
 </script>
+
+<style>
+#link-btn {
+    font-size: 12px;
+    padding: 0 !important;
+}
+</style>
