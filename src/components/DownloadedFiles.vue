@@ -1,5 +1,5 @@
 <template>
-  <b-card header="Recent extracted files"
+  <b-card header="All extracted files ready for download"
                 header-tag="header"
                 footer="* Use 7z or Winrar application to view gzipped files (gz)"
                 footer-tag="footer"
@@ -13,7 +13,7 @@
               <span class="filename" v-b-popover.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'" >
               <a :href="fileObj.url" target="_blank">
                 <font-awesome-icon icon="download" class="ml-2"/>
-                {{fileObj.component}} {{fileObj.type}} log in {{fileObj.ip}} instance {{fileObj.instance}}
+                {{fileObj.component}} {{fileObj.type}} log in {{fileObj.ip}} instance {{fileObj.instance}}, generated on <b>{{fileObj.createdDate}}</b>, by <em><b>{{fileObj.generatedBy}}</b></em> {{fileObj.filename}}
               </a>
             </span>
             </p>

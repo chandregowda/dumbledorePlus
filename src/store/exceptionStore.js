@@ -3,15 +3,15 @@ import * as actionTypes from './actionTypes';
 
 const ExceptionModule = {
   state: {
-    Exceptions: null
+    exceptions: null
   },
   mutations: {
-    updateExceptions: (state, Exceptions) => {
-      state.Exceptions = Exceptions
+    updateExceptions: (state, exceptions) => {
+      state.exceptions = exceptions
     }
   },
   getters: {
-    [actionTypes.EXCEPTIONS_GETTER]: state => state.Exceptions
+    [actionTypes.EXCEPTIONS_GETTER]: state => state.exceptions
   },
   actions: {
     [actionTypes.EXCEPTIONS_FETCH_ACTION]: ({
@@ -19,6 +19,7 @@ const ExceptionModule = {
     }) => {
       console.log('Getting Exception details')
       let url = '/Exception/get?accountName=' + localStorage.getItem('accountName');
+      // let url = '/Exception/get';
       axios.post(url).then(res => {
         console.log('Got Exception details')
         commit('updateExceptions', res.data)

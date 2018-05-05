@@ -19,6 +19,9 @@
                 <template slot="index" slot-scope="data">
                     {{data.index + 1}}
                 </template>
+                <template slot="generatedBy" slot-scope="row">
+                    {{row.item.accountName}}
+                </template>
                 <template slot="show_more" slot-scope="row">
                     <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn" variant="link">
                     {{ row.detailsShowing ? 'Less &#65085;' : 'More &#65086;'}}
@@ -48,6 +51,7 @@
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import axios from '../axios-auth';
 import ExceptionSummary from './ExceptionSummary';
+import moment from 'moment';
 // import * as utils from '../assets/appUtils';
 // import Timer from './Timer';
 
@@ -59,16 +63,34 @@ export default {
                     key: 'index',
                     label: 'Sl'
                 },
+                // {
+                //     key: 'createdAt',
+                //     sortable: true,
+                //     formatter: value => {
+                //         return new Date(value)
+                //             .toString()
+                //             .split(' ')
+                //             .splice(0, 5)
+                //             .join(' ');
+                //     }
+                // },
                 {
-                    key: 'createdAt',
+                    key: '_id',
+                    label: 'Created On',
                     sortable: true,
                     formatter: value => {
-                        return new Date(value)
-                            .toString()
-                            .split(' ')
-                            .splice(0, 5)
-                            .join(' ');
+                        let timestamp = value.toString().substring(0, 8);
+                        let date = new Date(parseInt(timestamp, 16));
+                        let createdOn = moment.unix(date).format('YYYY-MM-DD HH:mm:ss');
+                        console.log('_id:', value);
+                        console.log('timestame:', timestamp);
+                        console.log('createdOn:', createdOn);
+                        return createdOn;
                     }
+                },
+                {
+                    key: 'generatedBy',
+                    sortable: true
                 },
                 {
                     key: 'filters',

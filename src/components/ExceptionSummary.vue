@@ -27,7 +27,10 @@
         </b-button>
       </template>
       <template slot="row-details" slot-scope="row">
-        <app-exception-summary-details :row="row" :filters="filters" :scanOptions="scanOptions" :exceptionFileNameList="exceptionFileNameList" />
+        <app-exception-summary-details :row="row" :filters="filters"
+            :scanOptions="scanOptions"
+            :exceptionFileNameList="exceptionFileNameList"
+            :dbFetchList="dbFetchList" />
       </template>
       </b-table>
     </section>
@@ -44,6 +47,7 @@ export default {
     props: ['exceptionDetails', 'filters', 'scanOptions'],
     data() {
         return {
+            dbFetchList: {},
             exceptionFileNameList: [],
             downloading: false,
             fields: [
@@ -83,6 +87,8 @@ export default {
             if (this.exceptionDetails) {
                 updatedList = this.exceptionDetails.map(o => {
                     o.extractedFile = null;
+                    o.extractedFileList = [];
+                    o.extractedFileCount = 0;
                     return o;
                 });
             }

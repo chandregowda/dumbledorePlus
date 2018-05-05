@@ -1,5 +1,6 @@
 /* UITLITY FUNCTION */
 import axios from '../axios-auth';
+import moment from 'moment';
 
 export const thousandSeparator = function (x, separator = '.') {
   return x
@@ -58,4 +59,28 @@ export const downloadLogFile = function (options) {
       return reject(e);
     });
   })
+}
+
+export const getFileDetailsByDownloadedFileName = (sourceFileName, extractedFile) => {
+  let splits = extractedFile
+    .split('/')
+    .pop()
+    .split('-');
+
+  let url = extractedFile.replace(
+    '/home/logmonitor/tools/node/public/',
+    'https://dumbledore.yodlee.com/'
+  );
+
+  let fileObj = {
+    url,
+    filename: sourceFileName,
+    type: splits[2],
+    ip: splits[3].replace(/_/g, '.'),
+    instance: splits[4],
+    component: splits[5],
+    createdDate: moment.unix(splits[6] / 1000).format('YYYY-MM-DD HH:mm:ss'),
+    generatedBy: splits[7].replace(/.log.gz/, '')
+  };
+  return fileObj
 }
