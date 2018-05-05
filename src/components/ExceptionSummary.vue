@@ -164,12 +164,16 @@ export default {
                     },
                     generatedBy
                 })
-                .then(filename => {
-                    let splits = filename
+                .then(details => {
+                    let splits = details.extractedFile
                         .split('/')
                         .pop()
                         .split('-');
-                    let url = filename.replace('/home/logmonitor/tools/node/public/', 'https://dumbledore.yodlee.com/');
+
+                    let url = details.extractedFile.replace(
+                        '/home/logmonitor/tools/node/public/',
+                        'https://dumbledore.yodlee.com/'
+                    );
                     let fileObj = {
                         url,
                         type: splits[2],

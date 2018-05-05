@@ -25,9 +25,9 @@
         </b-card>
     </section>
     <section v-else class="text-center">
-        <font-awesome-icon icon="sync-alt" spin/> please wait... 
+        <font-awesome-icon icon="sync-alt" spin/> please wait...
         <br>
-        <app-timer v-if="isLoading"/>    
+        <app-timer v-if="isLoading"/>
     </section>
   </div>
 </template>
