@@ -8,9 +8,5 @@ const axiosInstance = axios.create({
 })
 
 axiosInstance.defaults.timeout = timeout;
-export const axiosDumbledore = axios.create({
-  baseURL: 'https://dumbledore.yodlee.com'
-});
-axiosDumbledore.defaults.timeout = timeout;
 
 export default axiosInstance

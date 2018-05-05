@@ -13,7 +13,7 @@
       </div>
     </div>
     <section class="card-text table-responsive">
-      <b-table :items="exceptionDetails" :fields="fields"
+      <b-table :items="modifiedExceptionList" :fields="fields"
       show-empty
       striped
       bordered
@@ -50,6 +50,13 @@
               Extract Stack Trace
             </template>
           </b-button>
+
+            <span v-if="row.item.extractedFile" v-b-popover.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'" >
+              <a :href="row.item.extractedFile.url" target="_blank">
+                <font-awesome-icon icon="download" class="ml-2"/>
+                {{row.item.extractedFile.component}} {{row.item.extractedFile.type}} log in {{row.item.extractedFile.ip}} instance {{row.item.extractedFile.instance}}
+              </a>
+            </span>
         </b-card>
       </template>
       </b-table>
@@ -100,6 +107,16 @@ export default {
         appTimer: Timer
     },
     computed: {
+        modifiedExceptionList() {
+            let updatedList = this.exceptionDetails;
+            if (this.exceptionDetails) {
+                updatedList = this.exceptionDetails.map(o => {
+                    o.extractedFile = null;
+                    return o;
+                });
+            }
+            return updatedList;
+        },
         hasDownloads() {
             return this.exceptionFileNameList.length;
         }
@@ -153,13 +170,17 @@ export default {
                         .pop()
                         .split('-');
                     let url = filename.replace('/home/logmonitor/tools/node/public/', 'https://dumbledore.yodlee.com/');
-                    this.exceptionFileNameList.push({
+                    let fileObj = {
                         url,
                         type: splits[2],
                         ip: splits[3].replace(/_/g, '.'),
                         instance: splits[4],
                         component: splits[5]
-                    });
+                    };
+
+                    this.exceptionFileNameList.push(fileObj);
+                    item.extractedFile = fileObj; // to show in the row
+
                     this.downloading = false;
                 })
                 .catch(e => console.log(e));
@@ -190,5 +211,14 @@ export default {
 }
 button:disabled {
     cursor: not-allowed;
+}
+table.b-table > thead > tr > th,
+table.b-table > tfoot > tr > th,
+table.b-table > thead > tr > th.sorting,
+table.b-table > tfoot > tr > th.sorting,
+.table-sm th,
+.table-sm td {
+    font-size: 12px !important;
+    white-space: nowrap;
 }
 </style>
