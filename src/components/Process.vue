@@ -7,10 +7,11 @@
         <font-awesome-icon icon="filter" class="mr-2 text-warning"/>
         <b-form-select v-model="filters.environment" :options="envOptions" size="sm" />
         <b-form-select v-model="filters.datacenter" :options="filteredDataCenters" size="sm" />
-        <b-form-input v-model="filters.ip" type="text" size="sm" placeholder="By SERVER" />
-        <b-form-input v-model="filters.component" type="text" size="sm" placeholder="By COMPONENT" />
+        <b-form-input class="medium" v-model="filters.ip" type="text" size="sm" placeholder="By SERVER" />
+        <b-form-input class="small" v-model="filters.port" type="text" size="sm" placeholder="By PORT" />
+        <b-form-input class="medium" v-model="filters.component" type="text" size="sm" placeholder="By COMPONENT" />
         <b-form-input v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
-        <b-form-input v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
+        <b-form-input class="small" v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
         <b-form-input v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
         <b-button size="lg" class="ml-1" variant="link" @click="reload" :disabled="isLoading" v-b-popover.hover="'Refresh build details'" >
           <!-- <font-awesome-icon icon="spinner" spin v-if="isLoading" />  -->
@@ -93,6 +94,7 @@ export default {
                 environment: 'production',
                 datacenter: null,
                 ip: '',
+                port: '',
                 component: '',
                 cobrandGroup: '',
                 build: '',
@@ -258,5 +260,11 @@ select.form-control {
 }
 .hint {
     font-style: italic;
+}
+input.small {
+    width: 110px;
+}
+input.medium {
+    width: 140px;
 }
 </style>

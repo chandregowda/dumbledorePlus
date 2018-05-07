@@ -18,8 +18,8 @@ const ExceptionModule = {
       commit
     }) => {
       console.log('Getting Exception details')
-      let url = '/Exception/get?accountName=' + localStorage.getItem('accountName');
-      // let url = '/Exception/get';
+      // let url = '/Exception/get?accountName=' + localStorage.getItem('accountName');
+      let url = '/Exception/get';
       axios.post(url).then(res => {
         console.log('Got Exception details')
         commit('updateExceptions', res.data)

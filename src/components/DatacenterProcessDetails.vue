@@ -2,7 +2,7 @@
   <div class="container-fluid ">
     <h3 class="mt-3 text-info">
       <font-awesome-icon class="mr-3 text-primary" size="lg" icon="sitemap" title="Datacenter Process Details"/>
-      Datacenter Process Details - <span class="h6">{{dcInfo.environment.toUpperCase()}} - {{dcInfo.dc.toUpperCase()}}</span>
+      Datacenter Process Details - <span class="h6">{{dcInfo.environment.toUpperCase()}} - {{dcInfo.dc.toUpperCase()}} - {{filters.component}}</span>
     </h3>
     <hr>
       <!-- <div class="col-sm2">
@@ -174,7 +174,7 @@ export default {
                 {
                     key: 'port'
                 },
-                // { key: 'component', sortable: false },
+                { key: 'component', sortable: false },
                 { key: 'cobrandGroup', sortable: true },
                 { key: 'build', sortable: true },
                 { key: 'processStartDate', sortable: false, label: 'Started On (PST)' },

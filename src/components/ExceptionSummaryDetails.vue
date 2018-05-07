@@ -18,7 +18,8 @@
     <section v-if="allDownloadableFile.length" class="mt-1">
       <p class="h6"><small><b>Extracted Files ready for analysis: </b></small></p>
       <b-row>
-        <b-col cols="4" v-for="(files, index) in allDownloadableFile" :key="index" v-if="files.filename === row.item.filename">
+        <b-col cols="4" v-for="(files, index) in allDownloadableFile" :key="index"
+        v-if="(files.filename === row.item.filename && files.ip === row.item.ip)">
           <a :href="files.url" target="_blank"  v-b-popover.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'">
             <font-awesome-icon icon="download" class="ml-2"/>
             <!-- {{files.component}} {{files.type}} log in {{files.ip}} instance {{files.instance}} -->
