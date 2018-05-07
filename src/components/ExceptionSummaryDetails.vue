@@ -1,14 +1,55 @@
 <template>
   <b-card>
-    <b-row>
-      <b-col>
-        <span class="mr-2"><b>IP: </b>{{row.item.ip}}</span>
-        <span class="mr-2"><b>Instance: </b>{{row.item.instance}}</span>
-        <span class="mr-2"><b>Number of occurrence: </b>{{row.item.count}}</span>
-        <span class="mr-2"><b>Log File name: </b>{{row.item.filename}}</span>
+    <b-row class="mb-2" v-if="processDetail">
+      <b-col cols="2">
+        <span class="mr-5"><b>Environment: </b>{{processDetail.environment}}</span>
+      </b-col>
+      <b-col cols="2">
+        <span class="mr-5"><b>Datacenter: </b>{{processDetail.datacenter}}</span>
+      </b-col>
+      <b-col cols="2">
+        <span class="mr-5"><b>IP: </b>{{processDetail.ip}}</span>
+      </b-col>
+      <b-col cols="2">
+        <span class="mr-5"><b>Port: </b>{{processDetail.port}}</span>
+      </b-col>
+      <b-col cols>
+        <span class="mr-5"><b>Instance: </b>{{processDetail.instance}}</span>
+      </b-col>
+    </b-row>
+    <b-row class="mb-2" v-if="processDetail">
+      <b-col cols="2">
+        <span class="mr-5"><b>Component: </b>{{processDetail.component}}</span>
+      </b-col>
+      <b-col cols="2">
+        <span class="mr-5"><b>Build: </b>{{processDetail.build}}</span>
+      </b-col>
+      <b-col cols="2">
+        <span class="mr-5"><b>Cobrand Group: </b>{{processDetail.cobrandGroup}}</span>
+      </b-col>
+      <b-col cols>
+        <span class="mr-5"><b>Process Started on: </b>{{processDetail.processStartDate}} {{processDetail.processStartTime}}</span>
+      </b-col>
+    </b-row>
+    <b-row class="mb-2" >
+      <b-col cols="2">
+        <span><b>Number of occurrence: </b></span><span class="mr-5" style="color:red; font-size:1.2em;">{{row.item.count}}</span>
+      </b-col>
+      <b-col >
+        <span class="mr-5"><b>hostname: </b>{{processDetail.hostname}}</span>
         <!-- <span class="mr-2"><b>Total Downloadable Files: </b>{{numberOfDownloadableFiles}}</span> -->
       </b-col>
     </b-row>
+    <b-row class="mb-2" >
+      <b-col cols="4">
+        <span class="mr-5"><b>Log File name: </b>{{row.item.filename}}</span>
+      </b-col>
+    </b-row>
+    <!-- <b-row v-if="processDetail">
+      <b-col>
+        <span class="mr-2"><b>Process Detail: </b>{{processDetail}}</span>
+      </b-col>
+    </b-row> -->
     <b-row class="mt-2">
       <b-col>
         <b>Searched Result: </b><pre class="exception-details">{{row.item.exception}}</pre>
@@ -54,6 +95,7 @@ export default {
     data() {
         return {
             downloading: false,
+            processDetail: null,
             onCreateFetchedFile: [] // This is to make sure not to add to the list everytime details is opened
         };
     },
@@ -124,13 +166,21 @@ export default {
     // beforeCreate() {
     //     console.log('Summar Details Before Create');
     // },
+    created() {
+        this.getProcessDetails = this.$store.getters.GET_PROCESS_DETAILS;
+    },
     mounted() {
         // console.log('Summar Details Created', this.row.item);
         if (this.row) {
             let { ip, instance, filename } = this.row.item;
-            let component = this.filters.component;
+            let { environment, datacenter, component } = this.filters;
+
             // console.log('Getting download files for ', ip, instance, filename, component);
             let postData = { ip, instance, filename, component };
+            // call process vuex getter to know the process details for the given
+            this.processDetail = this.getProcessDetails({ environment, datacenter, ip, instance, component });
+            delete this.processDetail.command;
+
             let key = `${ip}-${instance}-${component}-${filename}`;
             if (!this.dbFetchList[key]) {
                 this.dbFetchList[key] = true;
@@ -144,15 +194,6 @@ export default {
                             // console.log('Element:', element);
                             let fileObj = appUtils.getFileDetailsByDownloadedFileName(filename, element.extractedFile);
 
-                            // let url = element.extractedFile.replace(
-                            //     '/home/logmonitor/tools/node/public/',
-                            //     'https://dumbledore.yodlee.com/'
-                            // );
-                            // let createdDate = element.extractedFile.split('-')[6];
-                            // // console.log(element.extractedFile, createdDate);
-                            // // console.log(moment.unix(createdDate / 1000).format('YYYY-MM-DD HH:mm:ss'));
-                            // element.createdDate = moment.unix(createdDate / 1000).format('YYYY-MM-DD HH:mm:ss');
-                            // element.url = url;
                             this.exceptionFileNameList.push(fileObj);
                         });
                     })

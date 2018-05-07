@@ -80,9 +80,13 @@ const summarizeProcessDetails = (processDetails) => {
     } = process;
     summary[environment]['totalProcess']++;
     if (!summary[environment]['datacenters'][datacenter]['components'][component]) {
-      summary[environment]['datacenters'][datacenter]['components'][component] = 0;
+      summary[environment]['datacenters'][datacenter]['components'][component] = {
+        count: 0,
+        details: []
+      };
     }
-    summary[environment]['datacenters'][datacenter]['components'][component]++;
+    summary[environment]['datacenters'][datacenter]['components'][component].count++;
+    summary[environment]['datacenters'][datacenter]['components'][component].details.push(process);
     summary[environment]['datacenters'][datacenter]['totalComponent']++;
     if (summary[environment]['datacenters'][datacenter]['ipList'].indexOf(ip) === -1) {
       summary[environment]['datacenters'][datacenter]['ipList'].push(ip);
@@ -114,14 +118,37 @@ const processModule = {
   getters: {
     [actionTypes.PROCESS_GETTER]: state => state.processDetails,
     [actionTypes.PROCESS_SUMMARY_GETTER]: state => state.summarizedProcessDetails,
-    [actionTypes.PROCESS_FETCHING_GETTER]: state => state.fetching
+    [actionTypes.PROCESS_FETCHING_GETTER]: state => state.fetching,
+    GET_PROCESS_DETAILS: state => {
+      return options => {
+        let {
+          environment,
+          datacenter,
+          ip,
+          instance,
+          component
+        } = options;
+        // console.log('Inside GET_PROCESS_DETAILS', environment, datacenter, ip, instance, component);
+        let env = state.summarizedProcessDetails[environment];
+        let dcs = env.datacenters[datacenter.toLowerCase()];
+        let comp = dcs.components[component];
+        let details = comp.details;
+        let allProcessList = details.filter(process => {
+          return process.ip === ip && process.instance === instance
+        })
+        // console.log('Filtered Process Detail', allProcessList);
+        if (allProcessList) {
+          return allProcessList[0];
+        }
+        return null;
+      }
+    }
   },
   actions: {
     summarizeProcessDetails: ({
       commit,
       dispatch
     }, processDetails) => {
-      console.log('Summarizing Process Details');
       const summarizedProcessDetails = summarizeProcessDetails(processDetails);
       commit('updateSummarizedProcessDetails', summarizedProcessDetails)
     },

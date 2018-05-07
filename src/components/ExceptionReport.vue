@@ -82,9 +82,6 @@ export default {
                         let timestamp = value.toString().substring(0, 8);
                         let date = new Date(parseInt(timestamp, 16));
                         let createdOn = moment.unix(date).format('YYYY-MM-DD HH:mm:ss');
-                        console.log('_id:', value);
-                        console.log('timestame:', timestamp);
-                        console.log('createdOn:', createdOn);
                         return createdOn;
                     }
                 },

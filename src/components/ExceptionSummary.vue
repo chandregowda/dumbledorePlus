@@ -12,8 +12,17 @@
         <app-downloaded-files :exceptionFileNameList="exceptionFileNameList" />
       </div>
     </div>
+
+    <hr>
+    <b-form inline class="mb-3">
+        <font-awesome-icon icon="filter" class="mr-2 text-warning"/>
+        <b-form-input class="medium mr-2" v-model="formFilters.ip" type="text" size="sm" placeholder="By SERVER" />
+        <b-form-input class="small mr-2" v-model="formFilters.instance" type="text" size="sm" placeholder="By INSTANCE" />
+        <b-form-input class="medium mr-2" v-model="formFilters.exception" type="text" size="sm" placeholder="By EXCEPTION" />
+    </b-form>
+
     <section class="card-text table-responsive">
-      <b-table :items="modifiedExceptionList" :fields="fields"
+      <b-table :items="filteredDetails" :fields="fields"
       show-empty
       striped
       bordered
@@ -50,6 +59,11 @@ export default {
             dbFetchList: {},
             exceptionFileNameList: [],
             downloading: false,
+            formFilters: {
+                exception: '',
+                ip: '',
+                instance: ''
+            },
             fields: [
                 { key: 'show_more', label: 'More' },
                 {
@@ -82,6 +96,24 @@ export default {
         appTimer: Timer
     },
     computed: {
+        filteredDetails() {
+            let filters = this.formFilters;
+            let data = this.modifiedExceptionList;
+            for (const key in filters) {
+                if (filters.hasOwnProperty(key) && filters[key]) {
+                    const element = filters[key].trim();
+                    if (element) {
+                        let newData = data.filter(item => {
+                            let reg = new RegExp(element.toLowerCase(), 'gi');
+                            return reg.test(item[key].toString().toLowerCase());
+                            // return item[key].toLowerCase().includes(element);
+                        });
+                        data = newData; // reassign filtered list
+                    }
+                }
+            }
+            return data;
+        },
         modifiedExceptionList() {
             let updatedList = this.exceptionDetails;
             if (this.exceptionDetails) {

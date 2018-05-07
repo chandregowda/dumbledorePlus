@@ -34,7 +34,7 @@ export default {
                     .sort(function(a, b) {
                         return a.toLowerCase().localeCompare(b, 'en', { sensitivity: 'base' });
                     })
-                    .map(k => ({ component: k, count: obj[k] }));
+                    .map(k => ({ component: k, count: obj[k].count }));
             }
         }
     }
