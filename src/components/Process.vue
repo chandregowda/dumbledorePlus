@@ -13,7 +13,10 @@
         <b-form-input v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
         <b-form-input class="small" v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
         <b-form-input v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
-        <b-button size="lg" class="ml-1" variant="link" @click="reload" :disabled="isLoading" v-b-popover.hover="'Refresh build details'" >
+        <b-button size="sm" variant="link" @click="download" v-b-popover.hover="'Download Excel'" v-show="!isLoading" >
+          <font-awesome-icon icon="download" class=""/>
+        </b-button>
+        <b-button size="sm" class="ml-1" variant="link" @click="reload" :disabled="isLoading" v-b-popover.hover="'Refresh build details'" >
           <!-- <font-awesome-icon icon="spinner" spin v-if="isLoading" />  -->
           <font-awesome-icon icon="sync-alt" :spin="isLoading"/> <app-timer v-if="isLoading"/>
         </b-button>
@@ -220,6 +223,47 @@ export default {
         }
     },
     methods: {
+        download() {
+            const url = '/downloads/Process.xlsx?';
+
+            axios
+                .get(url, {
+                    responseType: 'blob' // important
+                })
+                .then(response => {
+                    if (!window.navigator.msSaveOrOpenBlob) {
+                        // BLOB NAVIGATOR
+                        const url = window.URL.createObjectURL(
+                            new Blob([response.data], {
+                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            })
+                        );
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'Process.xlsx');
+                        document.body.appendChild(link);
+                        link.click();
+                    } else {
+                        // BLOB FOR EXPLORER 11
+                        window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'Process.xlsx');
+                    }
+                });
+
+            // axiosLocal
+            //     .get(url, { responseType: 'blob' })
+            //     .then(response => {
+            //         let blob = new Blob([response.data], {
+            //             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            //         });
+            //         let link = document.createElement('a');
+            //         link.href = window.URL.createObjectURL(blob);
+            //         link.download = 'Process.xlsx';
+            //         link.click();
+            //     })
+            //     .catch(err => {
+            //         console.log(err);
+            //     });
+        },
         reload() {
             this.loading = 1;
             this.$store.dispatch('PROCESS_FETCH_START_ACTION');

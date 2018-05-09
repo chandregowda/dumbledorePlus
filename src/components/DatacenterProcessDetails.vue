@@ -15,8 +15,9 @@
         <b-form-input class="small" v-model="filters.ip" type="text" size="sm" placeholder="By SERVER" />
         <b-form-input class="small" v-model="filters.port" type="text" size="sm" placeholder="By PORT" />
         <b-form-input v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
-        <b-form-input class="medium" v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
-        <b-form-input class="medium" v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
+        <b-form-input class="small" v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
+        <b-form-input class="small" v-model="filters.processStartDate" type="text" size="sm" placeholder="By DATE (PST)" />
+        <b-form-input class="small" v-model="filters.processStartTime" type="text" size="sm" placeholder="By TIME (PST)" />
         <b-form-input class="small" v-model="filters.pid" type="text" size="sm" placeholder="By PROCESS ID" />
         <b-btn size="sm" class="ml-1" variant="outline-info" v-b-modal.modal1 :disabled="isLoading">
           <font-awesome-icon icon="binoculars" /> {{scanActionText}}
@@ -152,6 +153,7 @@ export default {
                 cobrandGroup: '',
                 build: '',
                 processStartDate: '',
+                processStartTime: '',
                 pid: ''
             },
             fields: [
@@ -177,16 +179,16 @@ export default {
                 { key: 'component', sortable: false },
                 { key: 'cobrandGroup', sortable: true },
                 { key: 'build', sortable: true },
-                { key: 'processStartDate', sortable: false, label: 'Started On (PST)' },
+                { key: 'processStartDate', sortable: false, label: 'Start Date (PST)' },
                 {
                     key: 'processStartTime',
                     sortable: false,
-                    label: 'Started At'
+                    label: 'Start Time'
                 },
                 {
                     key: 'timestamp',
                     sortable: true,
-                    label: 'Started On (IST)',
+                    label: 'Start On (IST)',
                     formatter: value => {
                         return new Date(value)
                             .toString()
@@ -298,7 +300,7 @@ export default {
                 .sort(function(a, b) {
                     return a.toLowerCase().localeCompare(b, 'en', { sensitivity: 'base' });
                 })
-                .map(k => ({ value: k, text: `${k} (${obj[k]})` }));
+                .map(k => ({ value: k, text: `${k} (${obj[k].count})` }));
         }
     },
     created() {

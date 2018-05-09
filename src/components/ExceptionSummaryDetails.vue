@@ -1,6 +1,6 @@
 <template>
-  <b-card>
-    <b-row class="mb-2" v-if="processDetail">
+  <b-card v-if="processDetail">
+    <b-row class="mb-2">
       <b-col cols="2">
         <span class="mr-5"><b>Environment: </b>{{processDetail.environment}}</span>
       </b-col>
@@ -13,18 +13,18 @@
       <b-col cols="2">
         <span class="mr-5"><b>Port: </b>{{processDetail.port}}</span>
       </b-col>
-      <b-col cols>
+      <b-col cols="2">
         <span class="mr-5"><b>Instance: </b>{{processDetail.instance}}</span>
       </b-col>
-    </b-row>
-    <b-row class="mb-2" v-if="processDetail">
-      <b-col cols="2">
+      <b-col cols>
         <span class="mr-5"><b>Component: </b>{{processDetail.component}}</span>
       </b-col>
+    </b-row>
+    <b-row class="mb-2">
       <b-col cols="2">
         <span class="mr-5"><b>Build: </b>{{processDetail.build}}</span>
       </b-col>
-      <b-col cols="2">
+      <b-col cols="4">
         <span class="mr-5"><b>Cobrand Group: </b>{{processDetail.cobrandGroup}}</span>
       </b-col>
       <b-col cols>
@@ -35,13 +35,13 @@
       <b-col cols="2">
         <span><b>Number of occurrence: </b></span><span class="mr-5" style="color:red; font-size:1.2em;">{{row.item.count}}</span>
       </b-col>
-      <b-col >
+      <b-col v-if="processDetail.hostname">
         <span class="mr-5"><b>hostname: </b>{{processDetail.hostname}}</span>
         <!-- <span class="mr-2"><b>Total Downloadable Files: </b>{{numberOfDownloadableFiles}}</span> -->
       </b-col>
     </b-row>
     <b-row class="mb-2" >
-      <b-col cols="4">
+      <b-col cols>
         <span class="mr-5"><b>Log File name: </b>{{row.item.filename}}</span>
       </b-col>
     </b-row>
@@ -179,7 +179,6 @@ export default {
             let postData = { ip, instance, filename, component };
             // call process vuex getter to know the process details for the given
             this.processDetail = this.getProcessDetails({ environment, datacenter, ip, instance, component });
-            delete this.processDetail.command;
 
             let key = `${ip}-${instance}-${component}-${filename}`;
             if (!this.dbFetchList[key]) {

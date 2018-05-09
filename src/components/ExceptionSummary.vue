@@ -1,12 +1,13 @@
 <template>
   <div>
     <div>
-        <p class="h5 text-info text-center">
+        <p class="h5 text-info text-left">
         {{filters.environment.toUpperCase()}} <span class="highlight">{{filters.datacenter.toUpperCase()}}</span> datacenter
         <span class="component"> {{filters.component}} </span> component
         </p>
-        <p class="h6 text-center">
-          <small>Searched for <span class="highlight"> {{scanOptions.searchDate}} </span> with {{scanOptions.searchString||'default search string'}}</small>
+        <p class="h6 text-left">
+          <small>Searched for <span class="highlight"> {{scanOptions.searchDate}} </span> with {{scanOptions.searchString||'default search string'}}.</small>
+          <span class='text-danger pst-time'>PST time is {{losAngelesTime}}</span>
         </p>
       <div v-if="hasDownloads" class="mb-1">
         <app-downloaded-files :exceptionFileNameList="exceptionFileNameList" />
@@ -96,6 +97,9 @@ export default {
         appTimer: Timer
     },
     computed: {
+        losAngelesTime() {
+            return this.$store.getters.GET_LOSANGELES_TIME;
+        },
         filteredDetails() {
             let filters = this.formFilters;
             let data = this.modifiedExceptionList;
@@ -153,5 +157,9 @@ table.b-table > tfoot > tr > th.sorting,
 .table-sm td {
     font-size: 12px !important;
     white-space: nowrap;
+}
+
+.pst-time {
+    font-size: 12px;
 }
 </style>
