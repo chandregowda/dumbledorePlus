@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <!-- <app-process-filters></app-process-filters> -->
-    <h3 class="mt-3 text-info"><font-awesome-icon class="mr-3 text-primary" size="lg" icon="list-ul" title="Exception Report"/>Exception Report</h3>
+    <h3 class="mt-3 text-info"><font-awesome-icon class="mr-3 text-primary" size="lg" icon="list-ul" title="Reports"/>Reports</h3>
     <hr>
     <div class="row">
         <div class="col">
@@ -34,7 +34,8 @@
                         </b-row> -->
                         <b-row>
                           <b-col class="">
-                            <app-exception-summary :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters"/>
+                            <app-exception-summary v-if="row.item.filters.logType !== 'access'" :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" />
+                            <app-api-summary v-else :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters"/>
                           </b-col>
                         </b-row>
                         <b-button size="sm" @click="row.toggleDetails" variant="outline-info">Hide Details</b-button>
@@ -51,6 +52,7 @@
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import axios from '../axios-auth';
 import ExceptionSummary from './ExceptionSummary';
+import ApiSummary from './ApiSummary';
 import moment from 'moment';
 // import * as utils from '../assets/appUtils';
 // import Timer from './Timer';
@@ -91,10 +93,20 @@ export default {
                 },
                 {
                     key: 'filters',
+                    label: 'Scan options',
                     formatter: filters => {
                         let f = filters;
-                        let content = `${f.logType.toUpperCase()} log for ${f.environment.toUpperCase()} 
-                        ${f.datacenter} datacenter, ${f.component} component generated for ${f.searchDate}`;
+                        let logTypeMessage = f.logType === 'access' ? 'API details' : f.logType.toUpperCase() + ' log';
+                        let env = f.environment
+                            ? f.environment.toUpperCase()
+                            : f.environments ? f.environments.toUpperCase() : '';
+                        let dc = f.datacenter
+                            ? f.datacenter.toUpperCase()
+                            : f.datacenters ? f.datacenters.toUpperCase() : '';
+
+                        let content = `${logTypeMessage} ${env} ${dc} datacenter, ${
+                            f.component
+                        } component generated for ${f.searchDate}`;
                         return content;
                         // return JSON.stringify(value, undefined, 2);
                     }
@@ -114,7 +126,8 @@ export default {
     },
     components: {
         FontAwesomeIcon,
-        appExceptionSummary: ExceptionSummary
+        appExceptionSummary: ExceptionSummary,
+        appApiSummary: ApiSummary
     }
 };
 </script>

@@ -10,12 +10,31 @@
                     <div class="card-deck">
                     <div class="card" v-for="(dcDetails, dc) of details.datacenters" :key="dc">
                         <div class="card-body">
-                        <b-button size="md" v-b-popover.hover="'Click here for scanning logs'"  variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
+                            <b-row>
+                                <b-col class="text-warning">{{dc.toUpperCase()}}</b-col>
+                                <b-col class="text-right">
+                                    <b-link href="#" v-b-popover.hover="'Click here for scanning logs'" @click="moreActions({environment, dc, dcDetails})">
+                                        <font-awesome-icon class="mr-3 text-primary" size="lg" icon="sitemap" title="Logs"/>
+                                    </b-link>
+                                    <!-- <b-link href="#" v-b-popover.hover="'Click here for scanning API'" @click="moreActions({environment, dc, dcDetails})">
+                                        <font-awesome-icon class="mr-3 text-primary" size="lg" icon="link" title="Logs"/>
+                                    </b-link> -->
+                                </b-col>
+                            </b-row>
+                            <b-row class="mt-2">
+                                <b-col>
+                                    <h6 class="card-subtitle mb-2 text-muted"><small>IP:{{dcDetails.totalIp}}, Process:{{dcDetails.totalComponent}}</small></h6>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col>
+                                    <app-component-summary :componentDetails="dcDetails.components" />
+                                </b-col>
+                            </b-row>
+                        <!-- <b-button size="md" v-b-popover.hover="'Click here for scanning logs'"  variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
                             {{dc.toUpperCase()}}
-                        </b-button>
+                        </b-button> -->
                         <!-- <p class="h3 card-title">{{dc.toUpperCase()}}</p> -->
-                        <h6 class="card-subtitle mb-2 text-muted">IP:{{dcDetails.totalIp}}, Process:{{dcDetails.totalComponent}}</h6>
-                        <app-component-summary :componentDetails="dcDetails.components" />
                         </div>
                     </div>
                     </div>

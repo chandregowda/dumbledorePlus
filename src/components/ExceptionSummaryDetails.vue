@@ -16,28 +16,28 @@
       <b-col cols="2">
         <span class="mr-5"><b>Instance: </b>{{processDetail.instance}}</span>
       </b-col>
-      <b-col cols>
-        <span class="mr-5"><b>Component: </b>{{processDetail.component}}</span>
-      </b-col>
     </b-row>
     <b-row class="mb-2">
+      <b-col cols="2">
+        <span><b>Number of occurrence: </b></span><span class="mr-5" style="color:red; font-size:1.2em;">{{row.item.count}}</span>
+      </b-col>
+      <b-col cols="2">
+        <span class="mr-5"><b>Component: </b>{{processDetail.component}}</span>
+      </b-col>
       <b-col cols="2">
         <span class="mr-5"><b>Build: </b>{{processDetail.build}}</span>
       </b-col>
       <b-col cols="4">
         <span class="mr-5"><b>Cobrand Group: </b>{{processDetail.cobrandGroup}}</span>
       </b-col>
-      <b-col cols>
-        <span class="mr-5"><b>Process Started on: </b>{{processDetail.processStartDate}} {{processDetail.processStartTime}}</span>
-      </b-col>
     </b-row>
     <b-row class="mb-2" >
-      <b-col cols="2">
-        <span><b>Number of occurrence: </b></span><span class="mr-5" style="color:red; font-size:1.2em;">{{row.item.count}}</span>
-      </b-col>
-      <b-col v-if="processDetail.hostname">
+      <b-col cols="4" v-if="processDetail.hostname">
         <span class="mr-5"><b>hostname: </b>{{processDetail.hostname}}</span>
         <!-- <span class="mr-2"><b>Total Downloadable Files: </b>{{numberOfDownloadableFiles}}</span> -->
+      </b-col>
+      <b-col cols="4">
+        <span class="mr-5"><b>Process Started on: </b>{{processDetail.processStartDate}} {{processDetail.processStartTime}}</span>
       </b-col>
     </b-row>
     <b-row class="mb-2" >

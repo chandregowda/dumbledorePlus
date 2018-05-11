@@ -30,11 +30,12 @@
         <b-modal ref="myModalRef" hide-footer id="modal1" :title="modalTitle" v-model="modalShow">
             <div class="my-1">
                 <div class="row mb-3">
-                    <b-col sm="4" class="legend-small">Log Type</b-col>
+                    <b-col sm="2" class="legend-small">Log Type</b-col>
                     <b-col >
                         <b-form-radio-group id="logTypes" v-model="scanOptions.logType" name="radioSubComponent">
                         <b-form-radio value="server">Server</b-form-radio>
                         <b-form-radio value="core">Core</b-form-radio>
+                        <b-form-radio v-if="allowApiScan" value="access">API</b-form-radio>
                         </b-form-radio-group>
                     </b-col>
                 </div>
@@ -42,17 +43,17 @@
                 <div class="row mt-3">
                     <div class="col">
                         <b-row >
-                            <b-col sm="4" class="legend-small">Logs modified on</b-col>
+                            <b-col sm="2" class="legend-small">Logs for </b-col>
                             <b-col sm="3">
                                 <b-form-input class="small" v-model.trim="scanOptions.searchDate" type="text" size="sm" placeholder="YYYY-MM-DD" />
                             </b-col>
-                            <b-col >
-                                <b-form-text class="text-muted">
-                                    <b>PST:</b> {{losAngelesTime}}
+                            <b-col>
+                                <b-form-text class="ml-2">
+                                    <b>PST Time:</b> <span class="text-danger">{{losAngelesTime}}</span>
                                 </b-form-text>
                             </b-col>
                         </b-row>
-                        <b-row >
+                        <!-- <b-row >
                             <b-col sm="4" class="legend-small">Logs modified since</b-col>
                             <b-col >
                                 <b-form-input size="sm" type="range" :max="max" :min="min" v-model="lastModifiedSinceHrs"></b-form-input>
@@ -63,7 +64,7 @@
                                 <b-progress  :value="lastModifiedSince" class="w-100 mt-3"></b-progress>
                             </b-col>
                         </b-row>
-                        <h6 class="mt-1"><small class="text-danger hint">Files modified in last <b>{{lastModifiedSinceHrs}}</b> hours will be scanned</small></h6>
+                        <h6 class="mt-1"><small class="text-danger hint">Files modified in last <b>{{lastModifiedSinceHrs}}</b> hours will be scanned</small></h6> -->
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -71,7 +72,8 @@
                         <b-form-group>
                             <b-form-text class="legend-small">Search string optional</b-form-text>
                             <b-form-input v-model.trim="scanOptions.searchString" type="text" size="sm" placeholder="RegEx supported, avoid quotes" />
-                            <h6 class="mt-1"><small class="text-danger hint">By default, all 'xceptions', 'ORA-', 'failed', strings are searched</small></h6>
+                            <h6 class="mt-1" v-if="scanOptions.logType !== 'access'"><small class="text-danger hint">By default, all 'xceptions', 'ORA-', 'failed', strings are searched</small></h6>
+                            <h6 class="mt-1" v-else><small class="text-danger hint">By default, all API's are searched</small></h6>
                         </b-form-group>
                     </div>
                 </div>
@@ -91,10 +93,12 @@
 
       <div class="ml-3">
         <b-modal ref="resultModalRef" size="lg" class="bigModal" hide-footer id="modal2" title="Scan Summary Report" v-model="resultmodalShow">
-          <app-exception-summary :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions"/>
+          <app-exception-summary v-if="scanOptions.logType !== 'access'" :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions"/>
+          <app-api-summary v-else :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions"/>
           <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Analysis Completed</b-btn>
         </b-modal>
       </div>
+
       <br/>
       <div>
         <b-table
@@ -119,6 +123,7 @@
 <script>
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import ExceptionSummary from './ExceptionSummary';
+import ApiSummary from './ApiSummary';
 import axios from '../axios-auth';
 import * as utils from '../assets/appUtils';
 import moment from 'moment-timezone';
@@ -139,11 +144,6 @@ export default {
             scanText: 'Scan Now',
             scanActionText: 'Scan Options',
             exceptionDetails: null,
-            envOptions: [
-                { value: null, text: 'By ENVIRONMENT' },
-                { value: 'production', text: 'Production' },
-                { value: 'stage', text: 'Stage' }
-            ],
             filters: {
                 environment: this.dcInfo.environment,
                 datacenter: this.dcInfo.dc,
@@ -221,8 +221,10 @@ export default {
                 this.$store.getters.AUTH_USER_DETAILS_GETTER.accountName ||
                 'Unknown';
 
+            let url = '/scanner/getLogSummary';
+
             axios
-                .post('/scanner/getComponentExceptionSummary', {
+                .post(url, {
                     mailTo: from + '@yodlee.com',
                     environments: [this.dcInfo.environment],
                     datacenters: [this.dcInfo.dc],
@@ -272,6 +274,9 @@ export default {
             return this.$store.timeStore
                 ? this.$store.timeStore.losAngeles.format('YYYY-MM-DD')
                 : moment().format('YYYY-MM');
+        },
+        allowApiScan() {
+            return ['RESTSERVER', 'NEW SDK', 'YSL'].includes(this.filters.component);
         },
         filteredDetails() {
             let filters = this.filters;
@@ -324,6 +329,7 @@ export default {
     components: {
         FontAwesomeIcon,
         appExceptionSummary: ExceptionSummary,
+        appApiSummary: ApiSummary,
         appTimer: Timer
     }
 };
