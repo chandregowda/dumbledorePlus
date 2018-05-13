@@ -1,50 +1,61 @@
 <template>
   <div class="container-fluid">
     <!-- <app-process-filters></app-process-filters> -->
-    <h3 class="mt-3 text-info"><font-awesome-icon class="mr-3 text-primary" size="lg" icon="list-ul" title="Reports"/>Reports</h3>
+    <b-row>
+        <b-col cols="2">
+            <h3 class="mt-3 text-info"><font-awesome-icon class="mr-3 text-primary" size="lg" icon="list-ul" title="Reports"/>Reports </h3>
+        </b-col>
+        <b-col cols class="text-right">
+            <section class="text-right mb-3">
+                <b-button size="sm" class="ml-1" variant="link" @click="reload" :disabled="isLoading" >
+                <!-- <font-awesome-icon icon="spinner" spin v-if="isLoading" />  -->
+                <app-timer v-if="isLoading"/> <font-awesome-icon icon="sync-alt" :spin="isLoading"/> Refresh
+                </b-button>
+            </section>
+        </b-col>
+    </b-row>
     <hr>
-    <div class="row">
-        <div class="col">
-            <b-table
-                show-empty
-                striped
-                bordered
-                small
-                hover
-                responsive="true"
-                head-variant="light"
-                :items="getExceptionReports"
-                :fields="fields">
+    <section class="card-text table-responsive" v-if="getExceptionReports">
+        <b-table :items="getExceptionReports" :fields="fields"
+            show-empty
+            striped
+            bordered
+            small
+            hover
+            responsive="true"
+            head-variant="light" >
 
-                <template slot="index" slot-scope="data">
-                    {{data.index + 1}}
-                </template>
-                <template slot="generatedBy" slot-scope="row">
-                    {{row.item.accountName}}
-                </template>
-                <template slot="show_more" slot-scope="row">
-                    <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn" variant="link">
-                    {{ row.detailsShowing ? 'Less &#65085;' : 'More &#65086;'}}
-                    </b-button>
-                </template>
-                <template slot="row-details" slot-scope="row">
-                    <b-card>
-                        <!-- <b-row>
-                            <b-col>{{row.item.summary}}</b-col>
-                        </b-row> -->
-                        <b-row>
-                          <b-col class="">
+            <template slot="index" slot-scope="data">
+                {{data.index + 1}}
+            </template>
+            <template slot="generatedBy" slot-scope="row">
+                {{row.item.accountName}}
+            </template>
+            <template slot="show_more" slot-scope="row">
+                <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn" variant="link">
+                {{ row.detailsShowing ? 'Less &#65085;' : 'More &#65086;'}}
+                </b-button>
+            </template>
+            <template slot="row-details" slot-scope="row" v-if="row">
+                <b-card>
+                    <!-- <b-card-body> -->
+                        <app-exception-summary v-if="row.item.filters.logType !== 'access'" :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" />
+                        <app-api-summary v-else :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters"/>
+                    <!-- </b-card-body> -->
+                </b-card>
+                <!-- <b-card>
+                    <b-row>
+                        <b-col class="">
                             <app-exception-summary v-if="row.item.filters.logType !== 'access'" :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" />
                             <app-api-summary v-else :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters"/>
-                          </b-col>
-                        </b-row>
-                        <b-button size="sm" @click="row.toggleDetails" variant="outline-info">Hide Details</b-button>
-                    </b-card>
-                </template>
+                        </b-col>
+                    </b-row>
+                    <b-button size="sm" @click="row.toggleDetails" variant="outline-info">Hide Details</b-button>
+                </b-card> -->
+            </template>
 
-            </b-table>
-        </div>
-    </div>
+        </b-table>
+    </section>
   </div>
 </template>
 
@@ -55,7 +66,7 @@ import ExceptionSummary from './ExceptionSummary';
 import ApiSummary from './ApiSummary';
 import moment from 'moment';
 // import * as utils from '../assets/appUtils';
-// import Timer from './Timer';
+import Timer from './Timer';
 
 export default {
     data() {
@@ -65,17 +76,6 @@ export default {
                     key: 'index',
                     label: 'Sl'
                 },
-                // {
-                //     key: 'createdAt',
-                //     sortable: true,
-                //     formatter: value => {
-                //         return new Date(value)
-                //             .toString()
-                //             .split(' ')
-                //             .splice(0, 5)
-                //             .join(' ');
-                //     }
-                // },
                 {
                     key: '_id',
                     label: 'Created On',
@@ -115,24 +115,37 @@ export default {
             ]
         };
     },
+    methods: {
+        reload() {
+            this.$store.dispatch('EXCEPTIONS_FETCH_START_ACTION');
+            this.$store.dispatch('EXCEPTIONS_FETCH_ACTION');
+        }
+    },
     computed: {
         getExceptionReports() {
             return this.$store.getters.EXCEPTIONS_GETTER;
+        },
+        isLoading() {
+            return this.$store.getters.EXCEPTIONS_FETCHING_GETTER;
         }
     },
     created() {
         axios.defaults.headers.common['x-access-token'] = localStorage.getItem('token');
-        this.$store.dispatch('EXCEPTIONS_FETCH_ACTION');
+        if (!this.getExceptionReports) {
+            this.$store.dispatch('EXCEPTIONS_FETCH_START_ACTION');
+            this.$store.dispatch('EXCEPTIONS_FETCH_ACTION');
+        }
     },
     components: {
         FontAwesomeIcon,
         appExceptionSummary: ExceptionSummary,
-        appApiSummary: ApiSummary
+        appApiSummary: ApiSummary,
+        appTimer: Timer
     }
 };
 </script>
 
-<style>
+<style scoped>
 #link-btn {
     font-size: 12px;
     padding: 0 !important;

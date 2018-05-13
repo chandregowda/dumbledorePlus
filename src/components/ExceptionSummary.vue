@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div>
         <p class="h5 text-info text-left">
         {{filters.environment.toUpperCase()}} <span class="highlight">{{filters.datacenter.toUpperCase()}}</span> datacenter
@@ -22,7 +22,7 @@
         <b-form-input class="medium mr-2" v-model="formFilters.exception" type="text" size="sm" placeholder="By EXCEPTION" />
     </b-form>
 
-    <section class="card-text table-responsive">
+    <section class="card-text table-responsive" style="max-width:1270px">
       <b-table :items="filteredDetails" :fields="fields"
       show-empty
       striped
@@ -147,16 +147,6 @@ export default {
 }
 .component {
     color: blue;
-}
-
-table.b-table > thead > tr > th,
-table.b-table > tfoot > tr > th,
-table.b-table > thead > tr > th.sorting,
-table.b-table > tfoot > tr > th.sorting,
-.table-sm th,
-.table-sm td {
-    font-size: 12px !important;
-    white-space: nowrap;
 }
 
 .pst-time {

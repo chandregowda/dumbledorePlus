@@ -2,12 +2,7 @@
   <div>
     <div>
         <p class="h5 text-info text-left">
-        {{filters.environment
-            ? filters.environment.toUpperCase()
-            : filters.environments ? filters.environments.toUpperCase() : ''}}
-            <span class="highlight">
-              {{filters.datacenter ? filters.datacenter : filters.datacenters ? filters.datacenters : ''}}
-            </span> datacenter
+        {{environment}} <span class="highlight"> {{datacenter}} </span> datacenter
         <span class="component"> {{filters.component}} </span> component
         </p>
         <p class="h6 text-left">
@@ -27,7 +22,7 @@
         <b-form-input class="small mr-2" v-model="formFilters.status" type="text" size="sm" placeholder="By STATUS" />
     </b-form>
     <hr>
-    <div class="text-center">
+    <div class="text-center" v-if="exceptionDetails">
       <b-form inline class="mb-3">
         <p class="h6 text-left">
         <small>Per page : </small> <b-form-select class="small ml-2 mr-2" v-model="rowsPerPage" :options="pageOptions" size="sm" />
@@ -119,7 +114,7 @@ export default {
         filteredDetails() {
             let filters = this.formFilters;
             let data = [].concat(this.modifiedExceptionList);
-            console.log('Total modifiedExceptionList : ', data.length);
+
             for (const key in filters) {
                 if (filters.hasOwnProperty(key) && filters[key]) {
                     const element = filters[key].trim();
@@ -136,6 +131,16 @@ export default {
             let startIndex = this.rowsPerPage * this.currentPage - this.rowsPerPage;
             let finalData = data.splice(startIndex, this.rowsPerPage);
             return finalData;
+        },
+        environment() {
+            let filters = this.filters;
+            let env = filters.environment ? filters.environment : filters.environments ? filters.environments : '';
+            return env.toUpperCase();
+        },
+        datacenter() {
+            let filters = this.filters;
+            let dc = filters.datacenter ? filters.datacenter : filters.datacenters ? filters.datacenters : '';
+            return dc.toUpperCase();
         },
         modifiedExceptionList() {
             let updatedList = this.exceptionDetails;
@@ -166,16 +171,6 @@ export default {
 }
 .component {
     color: blue;
-}
-
-table.b-table > thead > tr > th,
-table.b-table > tfoot > tr > th,
-table.b-table > thead > tr > th.sorting,
-table.b-table > tfoot > tr > th.sorting,
-.table-sm th,
-.table-sm td {
-    font-size: 12px !important;
-    white-space: nowrap;
 }
 
 .pst-time {

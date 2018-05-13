@@ -1,58 +1,34 @@
 <template>
   <b-card v-if="processDetail">
     <b-row class="mb-2">
-      <b-col cols="2">
-        <span class="mr-5"><b>Environment: </b>{{processDetail.environment}}</span>
-      </b-col>
-      <b-col cols="2">
-        <span class="mr-5"><b>Datacenter: </b>{{processDetail.datacenter}}</span>
-      </b-col>
-      <b-col cols="2">
-        <span class="mr-5"><b>IP: </b>{{processDetail.ip}}</span>
-      </b-col>
-      <b-col cols="2">
-        <span class="mr-5"><b>Port: </b>{{processDetail.port}}</span>
-      </b-col>
-      <b-col cols="2">
-        <span class="mr-5"><b>Instance: </b>{{processDetail.instance}}</span>
+      <b-col cols>
+        <span class="mr-2">
+          {{processDetail.environment.toUpperCase()}}
+          <b class="text-danger">{{processDetail.datacenter.toUpperCase()}}</b> datacenter,
+          <b class="text-info">{{processDetail.component}}</b> component
+          running on {{processDetail.ip}} : {{processDetail.port}}
+          (instance: {{processDetail.instance}})
+        </span>
+        <span class="ml-4"><b>Hostname: </b>{{processDetail.hostname}}</span>
       </b-col>
     </b-row>
     <b-row class="mb-2">
-      <b-col cols="2">
-        <span><b>Number of occurrence: </b></span><span class="mr-5" style="color:red; font-size:1.2em;">{{row.item.count}}</span>
-      </b-col>
-      <b-col cols="2">
-        <span class="mr-5"><b>Component: </b>{{processDetail.component}}</span>
-      </b-col>
-      <b-col cols="2">
-        <span class="mr-5"><b>Build: </b>{{processDetail.build}}</span>
-      </b-col>
-      <b-col cols="4">
-        <span class="mr-5"><b>Cobrand Group: </b>{{processDetail.cobrandGroup}}</span>
-      </b-col>
-    </b-row>
-    <b-row class="mb-2" >
-      <b-col cols="4" v-if="processDetail.hostname">
-        <span class="mr-5"><b>hostname: </b>{{processDetail.hostname}}</span>
-        <!-- <span class="mr-2"><b>Total Downloadable Files: </b>{{numberOfDownloadableFiles}}</span> -->
-      </b-col>
-      <b-col cols="4">
+      <b-col cols>
+        <span class="mr-4"><b>Build: </b>{{processDetail.build}}</span>
+        <span class="mr-4"><b>Cobrand Group: </b>{{processDetail.cobrandGroup}}</span>
         <span class="mr-5"><b>Process Started on: </b>{{processDetail.processStartDate}} {{processDetail.processStartTime}}</span>
       </b-col>
     </b-row>
     <b-row class="mb-2" >
+      <!-- <span class="mr-2"><b>Total Downloadable Files: </b>{{numberOfDownloadableFiles}}</span> -->
       <b-col cols>
         <span class="mr-5"><b>Log File name: </b>{{row.item.filename}}</span>
       </b-col>
     </b-row>
-    <!-- <b-row v-if="processDetail">
-      <b-col>
-        <span class="mr-2"><b>Process Detail: </b>{{processDetail}}</span>
-      </b-col>
-    </b-row> -->
     <b-row class="mt-2">
       <b-col>
-        <b>Searched Result: </b><pre class="exception-details">{{row.item.exception}}</pre>
+        <b>Searched Result: </b> Occurrence <span style="color:red; font-size:1.2em;">{{row.item.count}}</span> times
+        <pre class="exception-details">{{row.item.exception}}</pre>
       </b-col>
     </b-row>
 

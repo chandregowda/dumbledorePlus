@@ -48,6 +48,15 @@ button:disabled {
     cursor: not-allowed;
 }
 
+table.b-table > thead > tr > th,
+table.b-table > tfoot > tr > th,
+table.b-table > thead > tr > th.sorting,
+table.b-table > tfoot > tr > th.sorting,
+.table-sm th,
+.table-sm td {
+    font-size: 12px !important;
+    white-space: nowrap;
+}
 /* SCROLL BAR CHANGE */
 /* width */
 ::-webkit-scrollbar {

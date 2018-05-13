@@ -341,20 +341,6 @@ select.form-control {
     font-size: 12px;
     margin: 0 2px;
 }
-
-@media (min-width: 993px) {
-    #modal2.bigModal .modal-content,
-    #modal2 div.modal-dialog.modal-lg,
-    #modal2 div.modal-lg {
-        max-width: 1100px !important;
-        min-width: 890px !important;
-    }
-}
-.hint,
-small.text-muted {
-    font-style: italic;
-    /* color: tomato !important; */
-}
 .legend-small {
     font-size: 12px;
     font-weight: bold;
