@@ -32,15 +32,18 @@
                 {{row.item.accountName}}
             </template>
             <template slot="show_more" slot-scope="row">
-                <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn" variant="link">
+                <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn-more" variant="link">
                 {{ row.detailsShowing ? 'Less &#65085;' : 'More &#65086;'}}
+                </b-button>
+                <b-button v-if="row.item.excelFileName" size="sm" variant="link" @click="downloadExcel(row.item.excelFileName)" id="link-btn-download" v-b-popover.hover="'Download Excel'" v-show="!isLoading" >
+                    <font-awesome-icon icon="download" class="" size="sm"/>
                 </b-button>
             </template>
             <template slot="row-details" slot-scope="row" v-if="row">
                 <b-card>
                     <!-- <b-card-body> -->
-                        <app-exception-summary v-if="row.item.filters.logType !== 'access'" :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" />
-                        <app-api-summary v-else :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters"/>
+                        <app-exception-summary v-if="row.item.filters.logType !== 'access'" :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName"/>
+                        <app-api-summary v-else :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName" />
                     <!-- </b-card-body> -->
                 </b-card>
                 <!-- <b-card>
@@ -65,7 +68,7 @@ import axios from '../axios-auth';
 import ExceptionSummary from './ExceptionSummary';
 import ApiSummary from './ApiSummary';
 import moment from 'moment';
-// import * as utils from '../assets/appUtils';
+import * as utils from '../assets/appUtils';
 import Timer from './Timer';
 
 export default {
@@ -119,6 +122,21 @@ export default {
         reload() {
             this.$store.dispatch('EXCEPTIONS_FETCH_START_ACTION');
             this.$store.dispatch('EXCEPTIONS_FETCH_ACTION');
+        },
+        download(item) {
+            console.log('Downloading item', item);
+            axios
+                .get('/exception/getSummaryExcel?id=' + item._id)
+                .then(r => console.log('Excel generated', r.data))
+                .catch(e => console.log(e));
+        },
+        downloadExcel(filename) {
+            let index = filename.indexOf('public');
+            if (index !== -1) {
+                let url = filename.substring(index + 'public'.length);
+                // const url = '/downloads/Process.xlsx?';
+                utils.downloadExcelFile(url);
+            }
         }
     },
     computed: {
@@ -146,7 +164,8 @@ export default {
 </script>
 
 <style scoped>
-#link-btn {
+#link-btn-more,
+#link-btn-download {
     font-size: 12px;
     padding: 0 !important;
 }

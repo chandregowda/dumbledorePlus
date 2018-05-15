@@ -17,7 +17,7 @@ export const saveDownloadDetails = function (options) {
   });
 }
 
-export const downloadLogFile = function (options) {
+export const generateExceptionLogFile = function (options) {
   let {
     environment,
     datacenter,
@@ -34,7 +34,7 @@ export const downloadLogFile = function (options) {
   // console.log(environment, ip, instance, component, datacenter, filename, searchCriteria, generatedBy, logDate);
   // console.log('Download Options', JSON.stringify(options, undefined, 2))
   return new Promise((resolve, reject) => {
-    axios.post('/exception/downloadLogFile', options).then(r => {
+    axios.post('/exception/generateExceptionLogFile', options).then(r => {
       // console.log('Downloading Completed', r);
       let extractedFile = r.data;
       saveDownloadDetails({
@@ -83,4 +83,37 @@ export const getFileDetailsByDownloadedFileName = (sourceFileName, extractedFile
     generatedBy: splits[7].replace(/.log.gz/, '')
   };
   return fileObj
+}
+
+export const downloadExcelFile = function (url) {
+  // windows
+  let indexOfLastSlash = url.lastIndexOf('\\');
+  if (indexOfLastSlash === -1) {
+    // Unix
+    indexOfLastSlash = url.lastIndexOf('/');
+  }
+
+  let filename = url.substring(indexOfLastSlash + 1);
+  axios
+    .get(url, {
+      responseType: 'blob' // important
+    })
+    .then(response => {
+      if (!window.navigator.msSaveOrOpenBlob) {
+        // BLOB NAVIGATOR
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          })
+        );
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+      } else {
+        // BLOB FOR EXPLORER 11
+        window.navigator.msSaveOrOpenBlob(new Blob([response.data]), filename);
+      }
+    });
 }

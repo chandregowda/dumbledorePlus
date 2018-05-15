@@ -224,30 +224,30 @@ export default {
     },
     methods: {
         download() {
-            const url = '/downloads/Process.xlsx?';
-
-            axios
-                .get(url, {
-                    responseType: 'blob' // important
-                })
-                .then(response => {
-                    if (!window.navigator.msSaveOrOpenBlob) {
-                        // BLOB NAVIGATOR
-                        const url = window.URL.createObjectURL(
-                            new Blob([response.data], {
-                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                            })
-                        );
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.setAttribute('download', 'Process.xlsx');
-                        document.body.appendChild(link);
-                        link.click();
-                    } else {
-                        // BLOB FOR EXPLORER 11
-                        window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'Process.xlsx');
-                    }
-                });
+            const url = '/downloads/Process.xlsx';
+            utils.downloadExcelFile(url);
+            // axios
+            //     .get(url, {
+            //         responseType: 'blob' // important
+            //     })
+            //     .then(response => {
+            //         if (!window.navigator.msSaveOrOpenBlob) {
+            //             // BLOB NAVIGATOR
+            //             const url = window.URL.createObjectURL(
+            //                 new Blob([response.data], {
+            //                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            //                 })
+            //             );
+            //             const link = document.createElement('a');
+            //             link.href = url;
+            //             link.setAttribute('download', 'Process.xlsx');
+            //             document.body.appendChild(link);
+            //             link.click();
+            //         } else {
+            //             // BLOB FOR EXPLORER 11
+            //             window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'Process.xlsx');
+            //         }
+            //     });
 
             // axiosLocal
             //     .get(url, { responseType: 'blob' })

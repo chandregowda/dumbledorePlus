@@ -20,6 +20,9 @@
         <b-form-input class="medium mr-2" v-model="formFilters.apiMethod" type="text" size="sm" placeholder="By API" />
         <b-form-input class="small mr-2" v-model="formFilters.cobrandId" type="text" size="sm" placeholder="By COBRAND" />
         <b-form-input class="small mr-2" v-model="formFilters.status" type="text" size="sm" placeholder="By STATUS" />
+        <b-button v-if="excelFileName" size="sm" variant="link" @click="downloadExcel(excelFileName)" v-b-popover.hover="'Download Excel'" >
+          <font-awesome-icon icon="download" class=""/>
+        </b-button>
     </b-form>
     <hr>
     <div class="text-center" v-if="exceptionDetails">
@@ -53,9 +56,10 @@
 <script>
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import Timer from './Timer';
+import * as utils from '../assets/appUtils';
 
 export default {
-    props: ['exceptionDetails', 'filters', 'scanOptions'],
+    props: ['exceptionDetails', 'filters', 'scanOptions', 'excelFileName'],
     data() {
         return {
             currentPage: 1,
@@ -156,6 +160,16 @@ export default {
         },
         hasDownloads() {
             return this.exceptionFileNameList.length;
+        }
+    },
+    methods: {
+        downloadExcel(filename) {
+            let index = filename.indexOf('public');
+            if (index !== -1) {
+                let url = filename.substring(index + 'public'.length);
+                // const url = '/downloads/Process.xlsx?';
+                utils.downloadExcelFile(url);
+            }
         }
     }
 };

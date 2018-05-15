@@ -3,7 +3,7 @@
     <div>
         <p class="h5 text-info text-left">
         {{filters.environment.toUpperCase()}} <span class="highlight">{{filters.datacenter.toUpperCase()}}</span> datacenter
-        <span class="component"> {{filters.component}} </span> component
+        <span class="component"> {{filters.component}} </span> component.
         </p>
         <p class="h6 text-left">
           <small>Searched for <span class="highlight"> {{scanOptions.searchDate}} </span> with {{scanOptions.searchString||'default search string'}}.</small>
@@ -20,6 +20,9 @@
         <b-form-input class="medium mr-2" v-model="formFilters.ip" type="text" size="sm" placeholder="By SERVER" />
         <b-form-input class="small mr-2" v-model="formFilters.instance" type="text" size="sm" placeholder="By INSTANCE" />
         <b-form-input class="medium mr-2" v-model="formFilters.exception" type="text" size="sm" placeholder="By EXCEPTION" />
+        <b-button v-if="excelFileName" size="sm" variant="link" @click="downloadExcel(excelFileName)" v-b-popover.hover="'Download Excel'" >
+          <font-awesome-icon icon="download" class=""/>
+        </b-button>
     </b-form>
 
     <section class="card-text table-responsive" style="max-width:1270px">
@@ -52,9 +55,10 @@ import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import DownloadedFiles from './DownloadedFiles';
 import ExceptionSummaryDetails from './ExceptionSummaryDetails';
 import Timer from './Timer';
+import * as utils from '../assets/appUtils';
 
 export default {
-    props: ['exceptionDetails', 'filters', 'scanOptions'],
+    props: ['exceptionDetails', 'filters', 'scanOptions', 'excelFileName'],
     data() {
         return {
             dbFetchList: {},
@@ -89,6 +93,16 @@ export default {
                 }
             ]
         };
+    },
+    methods: {
+        downloadExcel(filename) {
+            let index = filename.indexOf('public');
+            if (index !== -1) {
+                let url = filename.substring(index + 'public'.length);
+                // const url = '/downloads/Process.xlsx?';
+                utils.downloadExcelFile(url);
+            }
+        }
     },
     components: {
         FontAwesomeIcon,

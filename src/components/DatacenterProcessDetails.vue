@@ -93,8 +93,8 @@
 
       <div class="ml-3">
         <b-modal ref="resultModalRef" size="lg" class="bigModal" hide-footer id="modal2" title="Scan Summary Report" v-model="resultmodalShow">
-          <app-exception-summary v-if="scanOptions.logType !== 'access'" :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions"/>
-          <app-api-summary v-else :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions"/>
+          <app-exception-summary v-if="scanOptions.logType !== 'access'" :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
+          <app-api-summary v-else :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
           <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Analysis Completed</b-btn>
         </b-modal>
       </div>
@@ -144,6 +144,7 @@ export default {
             scanText: 'Scan Now',
             scanActionText: 'Scan Options',
             exceptionDetails: null,
+            excelFileName: null,
             filters: {
                 environment: this.dcInfo.environment,
                 datacenter: this.dcInfo.dc,
@@ -236,10 +237,11 @@ export default {
                     logPath: '/var/log'
                 })
                 .then(result => {
-                    this.exceptionDetails = result.data;
+                    this.exceptionDetails = result.data.summary;
+                    this.excelFileName = result.data.excelFileName;
                     this.isLoading = false;
                     this.scanActionText = 'Scan Options';
-                    if (result.data.length) {
+                    if (result.data.summary.length) {
                         this.modalShow = false;
                         setTimeout(() => {
                             this.resultmodalShow = true;

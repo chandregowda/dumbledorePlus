@@ -98,7 +98,7 @@ export default {
             // console.log('ScanOptions', this.scanOptions);
 
             appUtils
-                .downloadLogFile({
+                .generateExceptionLogFile({
                     environment,
                     ip,
                     instance,
