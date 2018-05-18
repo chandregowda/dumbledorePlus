@@ -13,10 +13,10 @@
                             <b-row>
                                 <b-col class="text-warning">{{dc.toUpperCase()}}</b-col>
                                 <b-col class="text-right">
-                                    <b-link href="#" v-b-popover.hover="'Click here for scanning logs'" @click="moreActions({environment, dc, dcDetails})">
+                                    <b-link href="#" v-b-tooltip.hover="'Click here for scanning logs'" @click="moreActions({environment, dc, dcDetails})">
                                         <font-awesome-icon class="mr-3 text-primary" size="lg" icon="sitemap" title="Logs"/>
                                     </b-link>
-                                    <!-- <b-link href="#" v-b-popover.hover="'Click here for scanning API'" @click="moreActions({environment, dc, dcDetails})">
+                                    <!-- <b-link href="#" v-b-tooltip.hover="'Click here for scanning API'" @click="moreActions({environment, dc, dcDetails})">
                                         <font-awesome-icon class="mr-3 text-primary" size="lg" icon="link" title="Logs"/>
                                     </b-link> -->
                                 </b-col>
@@ -31,7 +31,7 @@
                                     <app-component-summary :componentDetails="dcDetails.components" />
                                 </b-col>
                             </b-row>
-                        <!-- <b-button size="md" v-b-popover.hover="'Click here for scanning logs'"  variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
+                        <!-- <b-button size="md" v-b-tooltip.hover="'Click here for scanning logs'"  variant="link" class="h3 card-title" @click="moreActions({environment, dc, dcDetails})">
                             {{dc.toUpperCase()}}
                         </b-button> -->
                         <!-- <p class="h3 card-title">{{dc.toUpperCase()}}</p> -->

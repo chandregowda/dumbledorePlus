@@ -22,13 +22,13 @@
                 <!-- <b-nav-item to="/home" active-class="active" exact >
                     <font-awesome-icon  size="lg" icon="home" />
                 </b-nav-item> -->
-                <b-nav-item v-b-popover.hover="'Build Details'" to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
-                <b-nav-item v-b-popover.hover="'Component Summary'" to="/process-summary" active-class="active" ><font-awesome-icon size="lg" icon="chart-pie" title="Process Summary"/></b-nav-item>
-                <b-nav-item v-b-popover.hover="'Cobrand Details'" to="/cobrands" active-class="active" ><font-awesome-icon size="lg" icon="users" title="Cobrand Details"/></b-nav-item>
-                <b-nav-item v-b-popover.hover="'Reports'" to="/exception-report" active-class="active" ><font-awesome-icon size="lg" icon="list-ul" title="Reports"/></b-nav-item>
+                <b-nav-item v-b-tooltip.hover="'Build Details'" to="/process" active-class="active" ><font-awesome-icon size="lg" icon="cubes" /></b-nav-item>
+                <b-nav-item v-b-tooltip.hover="'Component Summary'" to="/process-summary" active-class="active" ><font-awesome-icon size="lg" icon="chart-pie" title="Process Summary"/></b-nav-item>
+                <b-nav-item v-b-tooltip.hover="'Cobrand Details'" to="/cobrands" active-class="active" ><font-awesome-icon size="lg" icon="users" title="Cobrand Details"/></b-nav-item>
+                <b-nav-item v-b-tooltip.hover="'Reports'" to="/exception-report" active-class="active" ><font-awesome-icon size="lg" icon="list-ul" title="Reports"/></b-nav-item>
                 <!-- <b-nav-item to="/disk" active-class="active" ><font-awesome-icon size="lg" icon="dot-circle" /></b-nav-item>
                 <b-nav-item to="/datacenter" active-class="active" ><font-awesome-icon size="lg" icon="server" /></b-nav-item> -->
-                <button v-b-popover.hover="'Logout'" class='logout' @click='logout' >
+                <button v-b-tooltip.hover="'Logout'" class='logout' @click='logout' >
                     <font-awesome-icon  size="lg" icon="sign-out-alt" />
                 </button>
             </template>

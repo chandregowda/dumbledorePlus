@@ -35,7 +35,7 @@
                 <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" id="link-btn-more" variant="link">
                 {{ row.detailsShowing ? 'Less &#65085;' : 'More &#65086;'}}
                 </b-button>
-                <b-button v-if="row.item.excelFileName" size="sm" variant="link" @click="downloadExcel(row.item.excelFileName)" id="link-btn-download" v-b-popover.hover="'Download Excel'" v-show="!isLoading" >
+                <b-button v-if="row.item.excelFileName" size="sm" variant="link" @click="downloadExcel(row.item.excelFileName)" id="link-btn-download" v-b-tooltip.hover="'Download Excel'" v-show="!isLoading" >
                     <font-awesome-icon icon="download" class="" size="sm"/>
                 </b-button>
             </template>

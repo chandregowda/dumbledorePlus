@@ -37,7 +37,7 @@
       <b-row>
         <b-col cols="4" v-for="(files, index) in allDownloadableFile" :key="index"
         v-if="(files.filename === row.item.filename && files.ip === row.item.ip)">
-          <a :href="files.url" target="_blank"  v-b-popover.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'">
+          <a :href="files.url" target="_blank"  v-b-tooltip.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'">
             <font-awesome-icon icon="download" class="ml-2"/>
             <!-- {{files.component}} {{files.type}} log in {{files.ip}} instance {{files.instance}} -->
             Generated on {{files.createdDate}} by {{files.generatedBy}}

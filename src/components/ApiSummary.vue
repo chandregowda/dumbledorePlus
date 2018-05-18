@@ -20,7 +20,7 @@
         <b-form-input class="medium mr-2" v-model="formFilters.apiMethod" type="text" size="sm" placeholder="By API" />
         <b-form-input class="small mr-2" v-model="formFilters.cobrandId" type="text" size="sm" placeholder="By COBRAND" />
         <b-form-input class="small mr-2" v-model="formFilters.status" type="text" size="sm" placeholder="By STATUS" />
-        <b-button v-if="excelFileName" size="sm" variant="link" @click="downloadExcel(excelFileName)" v-b-popover.hover="'Download Excel'" >
+        <b-button v-if="excelFileName" size="sm" variant="link" @click="downloadExcel(excelFileName)" v-b-tooltip.hover="'Download Excel'" >
           <font-awesome-icon icon="download" class=""/>
         </b-button>
     </b-form>

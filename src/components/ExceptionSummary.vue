@@ -20,7 +20,7 @@
         <b-form-input class="medium mr-2" v-model="formFilters.ip" type="text" size="sm" placeholder="By SERVER" />
         <b-form-input class="small mr-2" v-model="formFilters.instance" type="text" size="sm" placeholder="By INSTANCE" />
         <b-form-input class="medium mr-2" v-model="formFilters.exception" type="text" size="sm" placeholder="By EXCEPTION" />
-        <b-button v-if="excelFileName" size="sm" variant="link" @click="downloadExcel(excelFileName)" v-b-popover.hover="'Download Excel'" >
+        <b-button v-if="excelFileName" size="sm" variant="link" @click="downloadExcel(excelFileName)" v-b-tooltip.hover="'Download Excel'" >
           <font-awesome-icon icon="download" class=""/>
         </b-button>
     </b-form>

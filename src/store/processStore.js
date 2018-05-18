@@ -161,11 +161,11 @@ const processModule = {
       commit,
       dispatch
     }) => {
-      console.log('Getting Process details');
+      console.log(`${(new Date()).toLocaleString()} : Getting Process details`);
       commit('updateFetching', true);
       axios.post('/process/get').then(res => {
         // axiosDumbledore.post('capi/getProcessDetails').then(res => {
-        console.log('Got process details from Dumbledore')
+        console.log(`${(new Date()).toLocaleString()} : Fetched Process details from Dumbledore`);
         commit('updateFetching', false);
         commit('updateProcessDetails', res.data);
         setTimeout(() => {

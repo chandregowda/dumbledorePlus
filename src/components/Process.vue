@@ -13,10 +13,10 @@
         <b-form-input v-model="filters.cobrandGroup" type="text" size="sm" placeholder="By COBRAND GROUP" />
         <b-form-input class="small" v-model="filters.build" type="text" size="sm" placeholder="By BUILD" />
         <b-form-input v-model="filters.processStartDate" type="text" size="sm" placeholder="By STARTED ON (PST)" />
-        <b-button size="sm" variant="link" @click="download" v-b-popover.hover="'Download Excel'" v-show="!isLoading" >
+        <b-button size="sm" variant="link" @click="download" v-b-tooltip.hover="'Download Excel'" v-show="!isLoading" >
           <font-awesome-icon icon="download" class=""/>
         </b-button>
-        <b-button size="sm" class="ml-1" variant="link" @click="reload" :disabled="isLoading" v-b-popover.hover="'Refresh build details'" >
+        <b-button size="sm" class="ml-1" variant="link" @click="refresh" :disabled="isLoading" v-b-tooltip.hover="'Refresh build details'" >
           <!-- <font-awesome-icon icon="spinner" spin v-if="isLoading" />  -->
           <font-awesome-icon icon="sync-alt" :spin="isLoading"/> <app-timer v-if="isLoading"/>
         </b-button>
@@ -219,55 +219,28 @@ export default {
             this.$store.dispatch('DATACENTERS_FETCH_ACTION'); // get the datacenters, make sure 'x-access-token' is set
         }
         if (!isLoadingCompleted && (!oldProcessDetails || !oldProcessDetails.length)) {
-            this.$store.dispatch('PROCESS_GET_ALL_ACTION');
+            // this.$store.dispatch('PROCESS_GET_ALL_ACTION');
+            if (!this.interval) {
+                this.startRefreshInterval();
+            }
         }
     },
     methods: {
         download() {
             const url = '/downloads/Process.xlsx';
             utils.downloadExcelFile(url);
-            // axios
-            //     .get(url, {
-            //         responseType: 'blob' // important
-            //     })
-            //     .then(response => {
-            //         if (!window.navigator.msSaveOrOpenBlob) {
-            //             // BLOB NAVIGATOR
-            //             const url = window.URL.createObjectURL(
-            //                 new Blob([response.data], {
-            //                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            //                 })
-            //             );
-            //             const link = document.createElement('a');
-            //             link.href = url;
-            //             link.setAttribute('download', 'Process.xlsx');
-            //             document.body.appendChild(link);
-            //             link.click();
-            //         } else {
-            //             // BLOB FOR EXPLORER 11
-            //             window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'Process.xlsx');
-            //         }
-            //     });
-
-            // axiosLocal
-            //     .get(url, { responseType: 'blob' })
-            //     .then(response => {
-            //         let blob = new Blob([response.data], {
-            //             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            //         });
-            //         let link = document.createElement('a');
-            //         link.href = window.URL.createObjectURL(blob);
-            //         link.download = 'Process.xlsx';
-            //         link.click();
-            //     })
-            //     .catch(err => {
-            //         console.log(err);
-            //     });
         },
-        reload() {
+        refresh() {
             this.loading = 1;
             this.$store.dispatch('PROCESS_FETCH_START_ACTION');
             this.$store.dispatch('PROCESS_GET_ALL_ACTION');
+        },
+        startRefreshInterval() {
+            this.refresh(); // call once
+            const minutes = 3;
+            const refreshInterval = 1000 * 60 * minutes;
+            console.log(`Setting Refresh interval of ${minutes} minutes to fetch process data`);
+            this.interval = setInterval(this.refresh, refreshInterval);
         }
     },
     components: {
@@ -292,7 +265,7 @@ select.form-control {
     font-size: 12px;
 }
 .hint {
-    font-style: italic;
+    /* font-style: italic; */
 }
 input.small {
     width: 110px;

@@ -10,7 +10,7 @@
                 footer-class="analysis-footer"
             >
             <p class="mb-1 card-text" v-for="(fileObj, index) in exceptionFileNameList" :key="index">
-              <span class="filename" v-b-popover.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'" >
+              <span class="filename" v-b-tooltip.hover="'Download Exception details (gz Zipped) and open it using 7z or Winrar'" >
               <a :href="fileObj.url" target="_blank">
                 <font-awesome-icon icon="download" class="ml-2"/>
                 {{fileObj.component}} {{fileObj.type}} log in {{fileObj.ip}} instance {{fileObj.instance}}, generated on <b>{{fileObj.createdDate}}</b>, by <em><b>{{fileObj.generatedBy}}</b></em> {{fileObj.filename}}
