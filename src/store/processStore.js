@@ -108,7 +108,7 @@ const processModule = {
     updateProcessDetails: (state, processDetails) => {
       state.processDetails = processDetails;
     },
-    updateFetching: (state, isFetchingCompleted) => {
+    updateProcessFetching: (state, isFetchingCompleted) => {
       state.fetching = isFetchingCompleted;
     },
     updateSummarizedProcessDetails: (state, summarizedProcessDetails) => {
@@ -155,18 +155,18 @@ const processModule = {
     [actionTypes.PROCESS_FETCH_START_ACTION]: ({
       commit
     }) => {
-      commit('updateFetching', true)
+      commit('updateProcessFetching', true)
     },
     [actionTypes.PROCESS_GET_ALL_ACTION]: ({
       commit,
       dispatch
     }) => {
       console.log(`${(new Date()).toLocaleString()} : Getting Process details`);
-      commit('updateFetching', true);
+      commit('updateProcessFetching', true);
       axios.post('/process/get').then(res => {
         // axiosDumbledore.post('capi/getProcessDetails').then(res => {
         console.log(`${(new Date()).toLocaleString()} : Fetched Process details from Dumbledore`);
-        commit('updateFetching', false);
+        commit('updateProcessFetching', false);
         commit('updateProcessDetails', res.data);
         setTimeout(() => {
           dispatch('summarizeProcessDetails', res.data)

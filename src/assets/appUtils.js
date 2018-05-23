@@ -117,3 +117,19 @@ export const downloadExcelFile = function (url) {
       }
     });
 }
+
+export const filterDetails = function (filters, data) {
+  for (const key in filters) {
+    if (filters.hasOwnProperty(key) && filters[key]) {
+      const element = filters[key].trim();
+      if (element) {
+        let newData = data.filter(item => {
+          let reg = new RegExp(element.toLowerCase(), 'gi');
+          return reg.test(item[key].toString().toLowerCase());
+        });
+        data = newData; // reassign filtered list
+      }
+    }
+  }
+  return data;
+}

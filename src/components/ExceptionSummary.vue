@@ -117,20 +117,7 @@ export default {
         filteredDetails() {
             let filters = this.formFilters;
             let data = this.modifiedExceptionList;
-            for (const key in filters) {
-                if (filters.hasOwnProperty(key) && filters[key]) {
-                    const element = filters[key].trim();
-                    if (element) {
-                        let newData = data.filter(item => {
-                            let reg = new RegExp(element.toLowerCase(), 'gi');
-                            return reg.test(item[key].toString().toLowerCase());
-                            // return item[key].toLowerCase().includes(element);
-                        });
-                        data = newData; // reassign filtered list
-                    }
-                }
-            }
-            return data;
+            return utils.filterDetails(filters, data);
         },
         modifiedExceptionList() {
             let updatedList = this.exceptionDetails;

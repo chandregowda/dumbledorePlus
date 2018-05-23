@@ -44,17 +44,6 @@
               {{ row.detailsShowing ? 'Less &#65085;' : 'More &#65086;'}}
             </b-button>
           </template>
-
-          <!-- <template slot="HEAD_actions" slot-scope="foo">
-            <input @click.stop type="checkbox" :value="foo.column" v-model="allSelected"> ALL
-          </template> -->
-
-          <!-- <template slot="actions" slot-scope="cell"> -->
-            <!-- <b-link size="sm" @click.stop="details(cell.item,cell.index,$event.target)">Action</b-link> -->
-            <!-- <input type="checkbox" v-model="allSelected" v-show="allSelected"> -->
-            <!-- <input type="checkbox" v-show="!allSelected"> -->
-          <!-- </template> -->
-
           <template slot="row-details" slot-scope="row">
             <b-card>
               <b-row>
@@ -86,8 +75,6 @@ import Timer from './Timer';
 export default {
     data() {
         return {
-            // fields: ['first_name', 'last_name', 'age'],
-            allSelected: '',
             envOptions: [
                 { value: null, text: 'By ENVIRONMENT' },
                 { value: 'production', text: 'Production' },
@@ -179,22 +166,7 @@ export default {
             return isLoadingCompleted;
         },
         filteredDetails() {
-            let filters = this.filters;
-            let data = this.$store.getters.PROCESS_GETTER;
-            for (const key in filters) {
-                if (filters.hasOwnProperty(key) && filters[key]) {
-                    const element = filters[key].trim();
-                    if (element) {
-                        let newData = data.filter(item => {
-                            let reg = new RegExp(element.toLowerCase(), 'gi');
-                            return reg.test(item[key].toString().toLowerCase());
-                            // return item[key].toLowerCase().includes(element);
-                        });
-                        data = newData; // reassign filtered list
-                    }
-                }
-            }
-            return data;
+            return utils.filterDetails(this.filters, this.$store.getters.PROCESS_GETTER);
         },
         filteredDataCenters() {
             let datacenters = this.$store.getters.DATACENTERS_GETTER;
@@ -231,7 +203,6 @@ export default {
             utils.downloadExcelFile(url);
         },
         refresh() {
-            this.loading = 1;
             this.$store.dispatch('PROCESS_FETCH_START_ACTION');
             this.$store.dispatch('PROCESS_GET_ALL_ACTION');
         },
@@ -263,9 +234,6 @@ select.form-control {
 }
 .loading {
     font-size: 12px;
-}
-.hint {
-    /* font-style: italic; */
 }
 input.small {
     width: 110px;
