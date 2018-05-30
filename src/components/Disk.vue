@@ -103,6 +103,9 @@ export default {
         refresh() {
             this.$store.dispatch('IP_GET_ALL_ACTION');
             this.$store.dispatch('IPSTATUS_GET_ALL_ACTION');
+        },
+        retry() {
+            this.$store.dispatch('IPSTATUS_RETRY_FAILED_ID');
         }
     },
     computed: {

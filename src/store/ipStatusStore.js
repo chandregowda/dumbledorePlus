@@ -49,6 +49,19 @@ const ipStatusModule = {
           commit('updateFiledIpList', res.data);
         })
         .catch((e) => console.log(e));
+    },
+    [actionTypes.IPSTATUS_RETRY_FAILED_ID]: ({
+      commit,
+      dispatch
+    }) => {
+      console.log('Retrying Failed IP List');
+      axios
+        .post('/ipStatus/retry')
+        .then((res) => {
+          console.log('Retry completed ipStatus details');
+          dispatch(actionTypes.IPSTATUS_GET_ALL_ACTION);
+        })
+        .catch((e) => console.log(e));
     }
   }
 };
