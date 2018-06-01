@@ -199,7 +199,12 @@ export default {
     },
     methods: {
         download() {
-            const url = '/downloads/Process.xlsx';
+            let from =
+                localStorage.getItem('accountName') ||
+                this.$store.getters.AUTH_USER_DETAILS_GETTER.accountName ||
+                'Unknown';
+
+            const url = '/' + from + '_ProcessDetails.xlsx';
             utils.downloadExcelFile(url);
         },
         refresh() {

@@ -12,13 +12,11 @@
           <font-awesome-icon icon="download" class=""/>
         </b-button>
         <b-button size="sm" class="ml-1" variant="link" @click="refresh" :disabled="isLoading" v-b-tooltip.hover="'Refresh Disk details'" >
-          <!-- <font-awesome-icon icon="spinner" spin v-if="isLoading" />  -->
           <font-awesome-icon icon="sync-alt" :spin="isLoading"/> <app-timer v-if="isLoading"/>
         </b-button>
-        <b-button size="sm" class="ml-1" variant="link" @click="retry" :disabled="isRetrying" v-b-tooltip.hover="'Retry Failure Disk details'" >
-          <!-- <font-awesome-icon icon="spinner" spin v-if="isRetrying" />  -->
+        <!-- <b-button size="sm" class="ml-1" variant="link" @click="retry" :disabled="isRetrying" v-b-tooltip.hover="'Retry Failure Disk details'" >
           <font-awesome-icon icon="retweet" /> <app-timer v-if="isRetrying"/>
-        </b-button>
+        </b-button> -->
     </b-form>
     <h6>*<small class="text-muted hint">Filters work with regular expression, Ex: "10$|12$" in IP will find xxx.xxx.xxx.10 and xxx.xxx.xxx.12</small></h6>
     <br/>
@@ -97,7 +95,12 @@ export default {
     },
     methods: {
         download() {
-            const url = '/downloads/Ip.xlsx';
+            let from =
+                localStorage.getItem('accountName') ||
+                this.$store.getters.AUTH_USER_DETAILS_GETTER.accountName ||
+                'Unknown';
+
+            const url = '/' + from + '_IpDetails.xlsx';
             utils.downloadExcelFile(url);
         },
         refresh() {

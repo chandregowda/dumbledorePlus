@@ -68,7 +68,7 @@ export const getFileDetailsByDownloadedFileName = (sourceFileName, extractedFile
     .split('-');
 
   let url = extractedFile.replace(
-    '/home/logmonitor/tools/node/public/',
+    '/home/logmonitor/ddplus/Server/public/',
     'https://dumbledore.yodlee.com/'
   );
 
@@ -86,6 +86,7 @@ export const getFileDetailsByDownloadedFileName = (sourceFileName, extractedFile
 }
 
 export const downloadExcelFile = function (url) {
+  console.log('Downloading Excel File: ', url);
   // windows
   let indexOfLastSlash = url.lastIndexOf('\\');
   if (indexOfLastSlash === -1) {
