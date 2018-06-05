@@ -123,18 +123,17 @@ export default {
             this.$store.dispatch('EXCEPTIONS_FETCH_START_ACTION');
             this.$store.dispatch('EXCEPTIONS_FETCH_ACTION');
         },
-        download(item) {
-            console.log('Downloading item', item);
-            axios
-                .get('/exception/getSummaryExcel?id=' + item._id)
-                .then(r => console.log('Excel generated', r.data))
-                .catch(e => console.log(e));
-        },
+        // download(item) {
+        //     console.log('Downloading item', item);
+        //     axios
+        //         .get('/exception/getSummaryExcel?id=' + item._id)
+        //         .then(r => console.log('Excel generated', r.data))
+        //         .catch(e => console.log(e));
+        // },
         downloadExcel(filename) {
-            let index = filename.indexOf('public');
+            let index = filename.indexOf('logSummary');
             if (index !== -1) {
-                let url = filename.substring(index + 'public'.length);
-                // const url = '/downloads/Process.xlsx?';
+                let url = filename.substring(index + 'logSummary'.length);
                 utils.downloadExcelFile(url);
             }
         }

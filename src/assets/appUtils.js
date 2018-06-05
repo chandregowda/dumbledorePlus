@@ -68,7 +68,7 @@ export const getFileDetailsByDownloadedFileName = (sourceFileName, extractedFile
     .split('-');
 
   let url = extractedFile.replace(
-    '/home/logmonitor/ddplus/Server/public/',
+    '/home/logmonitor/ddplus/Server/exceptions/',
     'https://dumbledore.yodlee.com/'
   );
 

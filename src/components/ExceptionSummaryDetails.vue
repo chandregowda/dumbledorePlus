@@ -49,7 +49,7 @@
 
     <hr>
     <b-button size="sm" @click="row.toggleDetails" variant="outline-info">Hide Details</b-button>
-    <b-button size="sm" :disabled="downloading"  @click="download(row.item)" variant="outline-info">
+    <b-button size="sm" :disabled="downloading"  @click="extractExceptionsDetailedLog(row.item)" variant="outline-info">
       <template v-if="downloading">
         <font-awesome-icon icon="spinner" spin /> Extracting Stack Trace since <app-timer />
       </template>
@@ -76,7 +76,7 @@ export default {
         };
     },
     methods: {
-        download(item) {
+        extractExceptionsDetailedLog(item) {
             this.downloading = true;
             let { ip, instance, filename } = item;
             let { environment, datacenter, component } = this.filters;

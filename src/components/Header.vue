@@ -88,4 +88,7 @@ export default {
     color: white;
     font-size: 12px;
 }
+.navbar {
+    padding: 0 1rem;
+}
 </style>
