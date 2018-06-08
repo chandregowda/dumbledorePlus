@@ -91,7 +91,7 @@
         </b-modal>
       </b-form>
 
-      <div class="ml-3">
+      <div class="ml-3" v-if="exceptionDetails">
         <b-modal ref="resultModalRef" size="lg" class="bigModal" hide-footer id="modal2" title="Scan Summary Report" v-model="resultmodalShow">
           <app-exception-summary v-if="scanOptions.logType !== 'access'" :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
           <app-api-summary v-else :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>

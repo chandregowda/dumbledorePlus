@@ -164,10 +164,9 @@ export default {
     },
     methods: {
         downloadExcel(filename) {
-            let index = filename.indexOf('public');
+            let index = filename.indexOf('logSummary');
             if (index !== -1) {
-                let url = filename.substring(index + 'public'.length);
-                // const url = '/downloads/Process.xlsx?';
+                let url = filename.substring(index + 'logSummary'.length);
                 utils.downloadExcelFile(url);
             }
         }
