@@ -17,12 +17,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import BootstrapVue from 'bootstrap-vue'
 
-import fontawesome from '@fortawesome/fontawesome'
-// import brands from '@fortawesome/fontawesome-free-brands'
-import solid from '@fortawesome/fontawesome-free-solid';
-
-// fontawesome.library.add(brands, solid);
-fontawesome.library.add(solid);
+// import fontawesome from '@fortawesome/fontawesome';
+// import '@fortawesome/fontawesome-free-brands';
+import '@fortawesome/fontawesome-free-solid';
 
 Vue.use(BootstrapVue)
 

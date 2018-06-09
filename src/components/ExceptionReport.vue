@@ -42,8 +42,15 @@
             <template slot="row-details" slot-scope="row" v-if="row">
                 <b-card>
                     <!-- <b-card-body> -->
-                        <app-exception-summary v-if="row.item.filters.logType !== 'access'" :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName"/>
-                        <app-api-summary v-else :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName" />
+                        <div v-if="row.item.filters.logType === 'server' || row.item.filters.logType === 'core'">
+                            <app-exception-summary :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName"/>
+                        </div>
+                        <div v-if="row.item.filters.logType === 'access'">
+                            <app-api-summary :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName" />
+                        </div>
+                        <div v-if="row.item.filters.logType === 'params'">
+                            <app-node-params-summary :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName"/>
+                        </div>
                     <!-- </b-card-body> -->
                 </b-card>
                 <!-- <b-card>
@@ -67,6 +74,8 @@ import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import axios from '../axios-auth';
 import ExceptionSummary from './ExceptionSummary';
 import ApiSummary from './ApiSummary';
+import NodeParamsSummary from './NodeParamsSummary';
+
 import moment from 'moment';
 import * as utils from '../assets/appUtils';
 import Timer from './Timer';
@@ -99,18 +108,21 @@ export default {
                     label: 'Scan options',
                     formatter: filters => {
                         let f = filters;
-                        let logTypeMessage = f.logType === 'access' ? 'API details' : f.logType.toUpperCase() + ' log';
-                        let env = f.environment
-                            ? f.environment.toUpperCase()
-                            : f.environments ? f.environments.toUpperCase() : '';
-                        let dc = f.datacenter
-                            ? f.datacenter.toUpperCase()
-                            : f.datacenters ? f.datacenters.toUpperCase() : '';
-
-                        let content = `${logTypeMessage} ${env} ${dc} datacenter, ${
-                            f.component
-                        } component generated for ${f.searchDate}`;
-                        return content;
+                        // console.log('Filters: ', f);
+                        if (f) {
+                            let logTypeMessage = f.logType === 'access' ? 'API details' : f.logType.toUpperCase() + ' log';
+                            let env = f.environment
+                                ? f.environment.toString().toUpperCase()
+                                : f.environments ? f.environments.toString().toUpperCase() : '';
+                            let dc = f.datacenter
+                                ? f.datacenter.toString().toUpperCase()
+                                : f.datacenters ? f.datacenters.toString().toUpperCase() : '';
+                            let content = `${logTypeMessage} ${env} ${dc} datacenter, ${
+                                f.component
+                            } component generated for ${f.searchDate}`;
+                            return content;
+                        }
+                        return 'NO_FILTER';
                         // return JSON.stringify(value, undefined, 2);
                     }
                 },
@@ -157,6 +169,7 @@ export default {
         FontAwesomeIcon,
         appExceptionSummary: ExceptionSummary,
         appApiSummary: ApiSummary,
+        appNodeParamsSummary: NodeParamsSummary,
         appTimer: Timer
     }
 };

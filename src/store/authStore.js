@@ -7,7 +7,8 @@ const authModule = {
     userDetails: null,
     token: null,
     authError: null,
-    authenticating: false
+    authenticating: false,
+    showUtilities: false
   },
   mutations: {
     updateUserDetails: (state, userDetails) => {
@@ -17,14 +18,17 @@ const authModule = {
       state.token = token
     },
     updateAuthDetails: (state, payload) => {
-      state.token = payload.token
-      state.userDetails = payload.userDetails
+      state.token = payload.token;
+      state.userDetails = payload.userDetails;
     },
     updateFailure: (state, message = 'Login Failed, invalid Credentials') => {
-      state.authError = message
+      state.authError = message;
     },
     updateAuthAuthenticating: (state, value = false) => {
-      state.authenticating = value
+      state.authenticating = value;
+    },
+    updateShowUtilities: (state, value = false) => {
+      state.showUtilities = value;
     }
   },
   getters: {
@@ -70,13 +74,15 @@ const authModule = {
         if (localStorage.getItem('expirationDate')) {
           let now = new Date()
           if (now.getTime() <= new Date(expirationDate).getTime()) {
-            let accountName = localStorage.getItem('accountName')
-            let displayName = localStorage.getItem('displayName')
+            let accountName = localStorage.getItem('accountName');
+            let displayName = localStorage.getItem('displayName');
+            let showUtilities = localStorage.getItem('utilities');
             commit('updateAuthDetails', {
               token,
               userDetails: {
                 accountName,
-                displayName
+                displayName,
+                showUtilities
               }
             })
             router.replace('/process') // Now navigate to default login page
@@ -129,7 +135,7 @@ const authModule = {
     [actionTypes.AUTH_CREATE_USER_ACTION]: ({
       commit
     }, details) => {
-      let accountName = details.sAMAccountName || details.mail.replace(/@*$/, '').toLowerCase()
+      let accountName = details.accountName || details.sAMAccountName || details.mail.replace(/@*$/, '').toLowerCase()
       let displayName = details.displayName
       localStorage.setItem('accountName', accountName)
       localStorage.setItem('displayName', displayName)
@@ -139,7 +145,13 @@ const authModule = {
           displayName: displayName
         }
       }).then(
-        // r => console.log(r)
+        r => {
+          if (r.data.role === 'admin') {
+            localStorage.setItem('utilities', 'QWEQ@COM-ER32DS09D');
+            commit('updateShowUtilities', true);
+          }
+          // localStorage.setItem('utilities', displayName)
+        }
       ).catch(e => console.log(e))
     }
   }

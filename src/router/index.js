@@ -12,6 +12,9 @@ import Disk from '@/components/Disk'
 import Datacenter from '@/components/Datacenter'
 import Home from '@/components/Home'
 import Cobrand from '@/components/Cobrand'
+import Utilities from '@/components/Utilities/Utilities'
+import Params from '@/components/Utilities/Params'
+import Users from '@/components/Utilities/Users'
 
 import {
   store
@@ -119,6 +122,42 @@ const routes = [{
     path: '/datacenter',
     name: 'Datacenter',
     component: Datacenter,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.AUTH_TOKEN_GETTER) {
+        next()
+      } else {
+        next('/')
+      }
+    }
+  },
+  {
+    path: '/utilities',
+    name: 'Utilities',
+    component: Utilities,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.AUTH_TOKEN_GETTER) {
+        next()
+      } else {
+        next('/')
+      }
+    }
+  },
+  {
+    path: '/params',
+    name: 'Params',
+    component: Params,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.AUTH_TOKEN_GETTER) {
+        next()
+      } else {
+        next('/')
+      }
+    }
+  },
+  {
+    path: '/users',
+    name: 'Users',
+    component: Users,
     beforeEnter: (to, from, next) => {
       if (store.getters.AUTH_TOKEN_GETTER) {
         next()

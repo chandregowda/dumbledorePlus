@@ -30,17 +30,18 @@
         <b-modal ref="myModalRef" hide-footer id="modal1" :title="modalTitle" v-model="modalShow">
             <div class="my-1">
                 <div class="row mb-3">
-                    <b-col sm="2" class="legend-small">Log Type</b-col>
+                    <b-col sm="2" class="legend-small">Scan in</b-col>
                     <b-col >
                         <b-form-radio-group id="logTypes" v-model="scanOptions.logType" name="radioSubComponent">
-                        <b-form-radio value="server">Server</b-form-radio>
-                        <b-form-radio value="core">Core</b-form-radio>
-                        <b-form-radio v-if="allowApiScan" value="access">API</b-form-radio>
+                        <b-form-radio value="server">Server Logs</b-form-radio>
+                        <b-form-radio v-if="filters.component !== 'NODE'" value="core">Core Logs</b-form-radio>
+                        <b-form-radio v-if="allowApiScan" value="access">Access(API)</b-form-radio>
+                        <b-form-radio v-if="filters.component === 'NODE'" value="params">Param Keys</b-form-radio>
                         </b-form-radio-group>
                     </b-col>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3" v-if="scanOptions.logType !== 'params'">
                     <div class="col">
                         <b-row >
                             <b-col sm="2" class="legend-small">Logs for </b-col>
@@ -66,19 +67,18 @@
                         </b-row>
                         <h6 class="mt-1"><small class="text-danger hint">Files modified in last <b>{{lastModifiedSinceHrs}}</b> hours will be scanned</small></h6> -->
                     </div>
+                    <h6 class="ml-3"><small class="text-danger hint">NOTE: Consider Server timezone while selecting dates to scan.</small></h6>
                 </div>
-                <div class="row mt-3">
+                <div class="row mt-3" v-if="scanOptions.logType !== 'access'">
                     <div class="col">
                         <b-form-group>
-                            <b-form-text class="legend-small">Search string optional</b-form-text>
-                            <b-form-input v-model.trim="scanOptions.searchString" type="text" size="sm" placeholder="RegEx supported, avoid quotes" />
-                            <h6 class="mt-1" v-if="scanOptions.logType !== 'access'"><small class="text-danger hint">By default, all 'xceptions', 'ORA-', 'failed', strings are searched</small></h6>
-                            <h6 class="mt-1" v-else><small class="text-danger hint">By default, all API's are searched</small></h6>
+                            <b-form-text class="legend-small">{{searchText}}</b-form-text>
+                            <b-form-input v-model.trim="scanOptions.searchString" type="text" size="sm" :placeholder="searchFieldText" />
+                            <h6 class="mt-1"><small class="text-danger hint">{{searchHint}}</small></h6>
                         </b-form-group>
                     </div>
                 </div>
             </div>
-            <h6><small class="text-danger hint">NOTE: Consider Server timezone while selecting dates to scan.</small></h6>
             <b-btn class="mt-3" variant="outline-info" block type="submit" :disabled="isLoading">
                 <template v-if="isLoading">
                     <font-awesome-icon icon="spinner" spin /> Scanning is in progress since <app-timer />
@@ -93,8 +93,16 @@
 
       <div class="ml-3" v-if="exceptionDetails">
         <b-modal ref="resultModalRef" size="lg" class="bigModal" hide-footer id="modal2" title="Scan Summary Report" v-model="resultmodalShow">
-          <app-exception-summary v-if="scanOptions.logType !== 'access'" :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
-          <app-api-summary v-else :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
+          <div v-if="scanOptions.logType === 'server' || scanOptions.logType === 'core'">
+              <app-exception-summary :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
+          </div>
+          <div v-if="scanOptions.logType === 'access'">
+            <app-api-summary :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
+          </div>
+          <div v-if="scanOptions.logType === 'params'">
+            <app-node-params-summary :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
+          </div>
+          <!-- {{exceptionDetails}} -->
           <b-btn class="mt-3" variant="outline-info" hide-footer block @click="hideModal">Analysis Completed</b-btn>
         </b-modal>
       </div>
@@ -124,6 +132,8 @@
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import ExceptionSummary from './ExceptionSummary';
 import ApiSummary from './ApiSummary';
+import NodeParamsSummary from './NodeParamsSummary';
+
 import axios from '../axios-auth';
 import * as utils from '../assets/appUtils';
 import moment from 'moment-timezone';
@@ -222,7 +232,7 @@ export default {
                 this.$store.getters.AUTH_USER_DETAILS_GETTER.accountName ||
                 'Unknown';
 
-            let url = '/scanner/getLogSummary';
+            let url = this.scanOptions.logType === 'params' ? '/scanner/searchParamKeyInAllNodeInstances' : '/scanner/getLogSummary';
 
             axios
                 .post(url, {
@@ -241,21 +251,23 @@ export default {
                     this.excelFileName = result.data.excelFileName;
                     this.isLoading = false;
                     this.scanActionText = 'Scan Options';
-                    if (result.data.summary.length) {
+                    if (result.data.summary && result.data.summary.length) {
                         this.modalShow = false;
                         setTimeout(() => {
                             this.resultmodalShow = true;
-                        }, 1000);
+                        }, 500);
                         this.scanText = 'Scan Now';
+                        console.log('Scan Result');
+                        console.log(result.data);
                     } else {
                         this.scanText = `Scan Completed with ZERO search results`;
                     }
                 })
                 .catch(e => {
-                    console.log(e);
+                    console.log('Something went wrong', e);
                     this.isLoading = false;
                     this.scanActionText = 'Scan Options';
-                    this.scanText = `Scan Completed, with some Error, ${e}`;
+                    this.scanText = `Scan Completed, ${e}`;
                 });
         },
         hideModal() {
@@ -263,6 +275,17 @@ export default {
         }
     },
     computed: {
+        searchHint() {
+            return (this.scanOptions.logType === 'params') ? 'Ex: enable_unified_flow, enable_sense_theme, enable_iav_theme'
+                : (this.scanOptions.logType === 'access') ? "By default, all API's are searched"
+                : "By default, all 'xceptions', 'ORA-', 'failed', strings are searched";
+        },
+        searchFieldText() {
+            return (this.scanOptions.logType === 'params') ? 'Comma separated keys' : 'RegEx supported, avoid quotes';
+        },
+        searchText() {
+            return (this.scanOptions.logType === 'params') ? 'Param Keys to Search' : 'Search string *optional';
+        },
         modalTitle() {
             return `Scan ${this.filters.component} logs`;
         },
@@ -332,6 +355,7 @@ export default {
         FontAwesomeIcon,
         appExceptionSummary: ExceptionSummary,
         appApiSummary: ApiSummary,
+        appNodeParamsSummary: NodeParamsSummary,
         appTimer: Timer
     }
 };

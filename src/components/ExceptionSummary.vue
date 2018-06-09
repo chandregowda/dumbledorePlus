@@ -3,7 +3,7 @@
     <div>
         <p class="h5 text-info text-left">
         {{filters.environment.toUpperCase()}} <span class="highlight">{{filters.datacenter.toUpperCase()}}</span> datacenter
-        <span class="component"> {{filters.component}} </span> component.
+        <span class="component"> {{filters.component}} </span> component
         </p>
         <p class="h6 text-left">
           <small>Searched for <span class="highlight"> {{scanOptions.searchDate}} </span> with {{scanOptions.searchString||'default search string'}}.</small>
