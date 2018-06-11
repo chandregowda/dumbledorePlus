@@ -48,7 +48,7 @@
                         <div v-if="row.item.filters.logType === 'access'">
                             <app-api-summary :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName" />
                         </div>
-                        <div v-if="row.item.filters.logType === 'params'">
+                        <div v-if="row.item.filters.logType === 'params' || row.item.filters.logType === 'config'">
                             <app-node-params-summary :exceptionDetails="row.item.summary" :filters="row.item.filters" :scanOptions="row.item.filters" :excelFileName="row.item.excelFileName"/>
                         </div>
                     <!-- </b-card-body> -->

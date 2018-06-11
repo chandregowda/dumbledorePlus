@@ -6,19 +6,21 @@
         <span class="component"> {{filters.component}} </span> component
         </p>
         <p class="h6 text-left">
-          <small>Searched for Params : <span class="highlight"> {{scanOptions.searchString}} </span></small>
+          <small>Searched keys in <b>{{scanOptions.logType + '.js'}}</b> : <span class="highlight"> {{scanOptions.searchString}} </span></small>
         </p>
     </div>
 
     <hr>
     <b-form inline class="mb-3">
         <font-awesome-icon icon="filter" class="mr-2 text-warning"/>
-        <b-form-input class="small mr-2" v-model="formFilters.ip" type="text" size="sm" placeholder="By SERVER" />
+        <b-form-input class="small mr-2" v-model="formFilters.ip" type="text" size="sm" placeholder="By IP" />
         <b-form-input class="small mr-2" v-model="formFilters.instance" type="text" size="sm" placeholder="By INSTANCE" />
-        <b-form-input class="medium mr-2" v-model="formFilters.cobrandId" type="text" size="sm" placeholder="By COBRAND" />
-        <b-form-input class="medium mr-2" v-model="formFilters.appId" type="text" size="sm" placeholder="By API ID" />
         <b-form-input class="mr-2" v-model="formFilters.key" type="text" size="sm" placeholder="By PARAM KEY" />
         <b-form-input class="small mr-2" v-model="formFilters.value" type="text" size="sm" placeholder="By VALUE" />
+        <template v-if="scanOptions.logType === 'params'">
+            <b-form-input class="medium mr-2" v-model="formFilters.cobrandId" type="text" size="sm" placeholder="By COBRAND" />
+            <b-form-input class="medium mr-2" v-model="formFilters.appId" type="text" size="sm" placeholder="By API ID" />
+        </template>
         <b-button v-if="excelFileName" size="sm" variant="link" @click="downloadExcel(excelFileName)" v-b-tooltip.hover="'Download Excel'" >
           <font-awesome-icon icon="download" class=""/>
         </b-button>
@@ -81,8 +83,16 @@ export default {
                 cobrandId: '',
                 ip: '',
                 instance: ''
-            },
-            fields: [
+            }
+        };
+    },
+    components: {
+        FontAwesomeIcon,
+        appTimer: Timer
+    },
+    computed: {
+        fields() {
+            let displayFields = [
                 {
                     key: 'index',
                     label: 'Sl'
@@ -98,17 +108,18 @@ export default {
                 },
                 { key: 'key', label: 'Param Key', sortable: true },
                 { key: 'value', sortable: true },
-                { key: 'cobrandId', sortable: true },
-                { key: 'appId', sortable: true },
+                // { key: 'cobrandId', sortable: true },
+                // { key: 'appId', sortable: true },
                 { key: 'filename' }
-            ]
-        };
-    },
-    components: {
-        FontAwesomeIcon,
-        appTimer: Timer
-    },
-    computed: {
+            ];
+            if (this.scanOptions.logType === 'params') {
+                displayFields.push({ key: 'cobrandId', sortable: true });
+                displayFields.push({ key: 'appId', sortable: true });
+            }
+            displayFields.push({ key: 'filename' });
+
+            return displayFields;
+        },
         losAngelesTime() {
             return this.$store.getters.GET_LOSANGELES_TIME;
         },
@@ -147,14 +158,15 @@ export default {
         },
         modifiedExceptionList() {
             let updatedList = this.exceptionDetails;
-            if (this.exceptionDetails) {
-                updatedList = this.exceptionDetails.map(o => {
-                    o.extractedFile = null;
-                    o.extractedFileList = [];
-                    o.extractedFileCount = 0;
-                    return o;
-                });
-            }
+            // if (this.exceptionDetails) {
+            //     updatedList = this.exceptionDetails.map(o => {
+
+            //         o.extractedFile = null;
+            //         o.extractedFileList = [];
+            //         o.extractedFileCount = 0;
+            //         return o;
+            //     });
+            // }
             return updatedList;
         },
         hasDownloads() {

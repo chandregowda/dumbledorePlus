@@ -32,16 +32,17 @@
                 <div class="row mb-3">
                     <b-col sm="2" class="legend-small">Scan in</b-col>
                     <b-col >
-                        <b-form-radio-group id="logTypes" v-model="scanOptions.logType" name="radioSubComponent">
-                        <b-form-radio value="server">Server Logs</b-form-radio>
-                        <b-form-radio v-if="filters.component !== 'NODE'" value="core">Core Logs</b-form-radio>
-                        <b-form-radio v-if="allowApiScan" value="access">Access(API)</b-form-radio>
-                        <b-form-radio v-if="filters.component === 'NODE'" value="params">Param Keys</b-form-radio>
+                        <b-form-radio-group  size="sm" id="logTypes" v-model="scanOptions.logType" name="radioSubComponent">
+                            <b-form-radio value="server">Server Logs</b-form-radio>
+                            <b-form-radio v-if="filters.component !== 'NODE'" value="core" class="sm">Core Logs</b-form-radio>
+                            <b-form-radio v-if="allowApiScan" value="access">Access(API)</b-form-radio>
+                            <b-form-radio v-if="filters.component === 'NODE'" value="params">params.js</b-form-radio>
+                            <b-form-radio v-if="filters.component === 'NODE'" value="config">config.js</b-form-radio>
                         </b-form-radio-group>
                     </b-col>
                 </div>
 
-                <div class="row mt-3" v-if="scanOptions.logType !== 'params'">
+                <div class="row mt-3" v-if="scanOptions.logType !== 'params' && scanOptions.logType !== 'config'">
                     <div class="col">
                         <b-row >
                             <b-col sm="2" class="legend-small">Logs for </b-col>
@@ -99,7 +100,7 @@
           <div v-if="scanOptions.logType === 'access'">
             <app-api-summary :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
           </div>
-          <div v-if="scanOptions.logType === 'params'">
+          <div v-if="scanOptions.logType === 'params' || scanOptions.logType === 'config'">
             <app-node-params-summary :exceptionDetails="exceptionDetails" :filters="filters" :scanOptions="scanOptions" :excelFileName="excelFileName"/>
           </div>
           <!-- {{exceptionDetails}} -->
@@ -232,7 +233,9 @@ export default {
                 this.$store.getters.AUTH_USER_DETAILS_GETTER.accountName ||
                 'Unknown';
 
-            let url = this.scanOptions.logType === 'params' ? '/scanner/searchParamKeyInAllNodeInstances' : '/scanner/getLogSummary';
+            let url = (this.scanOptions.logType === 'params' || this.scanOptions.logType === 'config')
+                        ? '/scanner/searchParamKeyInAllNodeInstances'
+                        : '/scanner/getLogSummary';
 
             axios
                 .post(url, {
@@ -276,15 +279,15 @@ export default {
     },
     computed: {
         searchHint() {
-            return (this.scanOptions.logType === 'params') ? 'Ex: enable_unified_flow, enable_sense_theme, enable_iav_theme'
+            return (this.scanOptions.logType === 'params' || this.scanOptions.logType === 'config') ? 'Ex: enable_unified_flow, enable_sense_theme, enable_iav_theme'
                 : (this.scanOptions.logType === 'access') ? "By default, all API's are searched"
                 : "By default, all 'xceptions', 'ORA-', 'failed', strings are searched";
         },
         searchFieldText() {
-            return (this.scanOptions.logType === 'params') ? 'Comma separated keys' : 'RegEx supported, avoid quotes';
+            return (this.scanOptions.logType === 'params' || this.scanOptions.logType === 'config') ? 'Comma separated keys' : 'RegEx supported, avoid quotes';
         },
         searchText() {
-            return (this.scanOptions.logType === 'params') ? 'Param Keys to Search' : 'Search string *optional';
+            return (this.scanOptions.logType === 'params' || this.scanOptions.logType === 'config') ? 'Param Keys to Search' : 'Search string *optional';
         },
         modalTitle() {
             return `Scan ${this.filters.component} logs`;
